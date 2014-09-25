@@ -1,0 +1,21 @@
+{
+    "name": "pdt256/shipping",
+    "description": "Shipping Rate API",
+    "license": "MIT",
+    "keywords": ["ship", "ups", "usps", "fedex"],
+    "authors": [
+        {
+            "name": "Jamie Isaacs",
+            "email": "pdt256@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "pdt256\\Shipping\\": "src"
+        }
+    }
+}
