@@ -9,12 +9,6 @@ Add the following lines to your ``composer.json`` file.
 
 ```JSON
 {
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/pdt256/shipping.git"
-		}
-	],
 	"require": {
 		"pdt256/shipping": "dev-master"
 	}
