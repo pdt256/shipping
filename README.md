@@ -222,6 +222,10 @@ array (
 )
 ```
 
+## AUTHOR
+
+Jamie Isaacs <pdt256@gmail.com>
+
 ### License
 
 [MIT license](http://opensource.org/licenses/MIT)
