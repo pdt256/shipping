@@ -51,7 +51,8 @@ Below is an example request to get shipping rates from the UPS API.
 
 Notice: The below line uses a stub class to fake a response from the UPS API.
 You can immediately use this method in your code until you get an account with UPS.
-```
+
+```php
 'request_adapter' => new RateRequest\StubUPS(),
 ```
 
