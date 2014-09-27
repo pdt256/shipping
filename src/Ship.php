@@ -102,7 +102,11 @@ class Ship
 					}
 				}
 			}
-			$display_rates[$shipping_group][] = $cheapest_row;
+
+			// Add row if it exists
+			if ( ! empty($cheapest_row)) {
+				$display_rates[$shipping_group][] = $cheapest_row;
+			}
 		}
 
 		return $display_rates;
