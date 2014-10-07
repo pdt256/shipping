@@ -1,5 +1,6 @@
-PHP Shipping API
-================
+## PHP Shipping API
+
+[![Total Downloads](https://poser.pugx.org/pdt256/shipping/downloads.svg)](https://packagist.org/packages/pdt256/shipping) [![Latest Stable Version](https://poser.pugx.org/pdt256/shipping/v/stable.svg)](https://packagist.org/packages/pdt256/shipping) [![Latest Unstable Version](https://poser.pugx.org/pdt256/shipping/v/unstable.svg)](https://packagist.org/packages/pdt256/shipping) [![License](https://poser.pugx.org/pdt256/shipping/license.svg)](https://packagist.org/packages/pdt256/shipping)
 
 A shipping rate wrapper for USPS, UPS, and Fedex.
 
