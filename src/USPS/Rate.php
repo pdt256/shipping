@@ -101,14 +101,35 @@ class Rate extends RateAdapter
 		foreach ($this->shipment->getPackages() as $p) {
 			$sequence_number++;
 
+			/**
+			 * RateV4Request / Package / Size
+			 required once
+			 Defined as follows:
+
+			 REGULAR: Package dimensions are 12’’ or less;
+			 LARGE: Any package dimension is larger than 12’’.
+
+			 For example: <Size>REGULAR</Size>
+			 string
+			 whiteSpace=collapse
+			 enumeration=LARGE
+			 enumeration=REGULAR
+
+			 */
+			if ($p->getWidth() > 12 or $p->getLength() > 12 or $p->getHeight() > 12) {
+				$size = 'LARGE';
+			} else {
+				$size = 'REGULAR';
+			}
+
 			$packages .= '<Package ID="' . $sequence_number .'">
 					<Service>ALL</Service>
 					<ZipOrigination>' . $this->shipment->getFromPostalCode() . '</ZipOrigination>
 					<ZipDestination>' . $this->shipment->getToPostalCode() . '</ZipDestination>
 					<Pounds>' . $p->getWeight() . '</Pounds>
 					<Ounces>0</Ounces>
-					<Container>' . $p->getPackaging() . '</Container>
-					<Size>' . $p->getSizeClassification() . '</Size>
+					<Container>RECTANGULAR</Container>
+					<Size>' . $size . '</Size>
 					<Width>' . $p->getWidth() . '</Width>
 					<Length>' . $p->getLength() . '</Length>
 					<Height>' . $p->getHeight() . '</Height>

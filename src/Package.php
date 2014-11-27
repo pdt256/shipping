@@ -2,52 +2,10 @@
 
 class Package
 {
-    const FEDEX_YOUR_PACKAGING = 'YOUR_PACKAGING';
-    const USPS_CONTAINER_RECTANGULAR = 'RECTANGULAR';
-    const USPS_SIZE_LARGE = 'LARGE';
-
     protected $weight;
     protected $width;
     protected $length;
     protected $height;
-    protected $packaging;
-    protected $size_classification;
-
-    /**
-     * @return mixed
-     */
-    public function getSizeClassification()
-    {
-        return $this->size_classification;
-    }
-
-    /**
-     * @param mixed $size_classification
-     * @return $this
-     */
-    public function setSizeClassification($size_classification)
-    {
-        $this->size_classification = $size_classification;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPackaging()
-    {
-        return $this->packaging;
-    }
-
-    /**
-     * @param mixed $packaging
-     * @return $this
-     */
-    public function setPackaging($packaging)
-    {
-        $this->packaging = $packaging;
-        return $this;
-    }
 
     /**
      * @return mixed

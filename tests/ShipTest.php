@@ -61,9 +61,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$p->setWeight(3)
 			->setWidth(9)
 			->setLength(9)
-			->setHeight(9)
-			->setPackaging(Package::USPS_CONTAINER_RECTANGULAR)
-			->setSizeClassification(Package::USPS_SIZE_LARGE);
+			->setHeight(9);
 
 		$s->addPackage($p);
 
@@ -106,11 +104,6 @@ class ShipTest extends PHPUnit_Framework_TestCase
 	{
 		$ship = Ship::factory($this->shipping_options);
 		$approved_codes = $ship->get_approved_codes('fedex');
-
-		$ps = $this->shipment->getPackages();
-		foreach ($ps as $p) {
-			$p->setPackaging(Package::FEDEX_YOUR_PACKAGING);
-		}
 
 		return [
 			'prod'           => FALSE,
