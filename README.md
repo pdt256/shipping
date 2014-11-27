@@ -74,32 +74,68 @@ $ups_rates = $ups->get_rates();
 Output array sorted by cost: (in cents)
 
 ```php
-array (
-  0 => 
-  array (
-    'code' => '03',
-    'name' => 'UPS Ground',
-    'cost' => 1900,
-  ),
-  1 => 
-  array (
-    'code' => '02',
-    'name' => 'UPS 2nd Day Air',
-    'cost' => 4900,
-  ),
-  2 => 
-  array (
-    'code' => '13',
-    'name' => 'UPS Next Day Air Saver',
-    'cost' => 8900,
-  ),
-  3 => 
-  array (
-    'code' => '01',
-    'name' => 'UPS Next Day Air',
-    'cost' => 9300,
-  ),
-)
+array(4) {
+  [0] =>
+  class pdt256\Shipping\Quote#56 (6) {
+    protected $code =>
+    string(2) "03"
+    protected $name =>
+    string(10) "UPS Ground"
+    protected $cost =>
+    int(1900)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(3) "ups"
+  }
+  [1] =>
+  class pdt256\Shipping\Quote#58 (6) {
+    protected $code =>
+    string(2) "02"
+    protected $name =>
+    string(15) "UPS 2nd Day Air"
+    protected $cost =>
+    int(4900)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(3) "ups"
+  }
+  [2] =>
+  class pdt256\Shipping\Quote#57 (6) {
+    protected $code =>
+    string(2) "13"
+    protected $name =>
+    string(22) "UPS Next Day Air Saver"
+    protected $cost =>
+    int(8900)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(3) "ups"
+  }
+  [3] =>
+  class pdt256\Shipping\Quote#55 (6) {
+    protected $code =>
+    string(2) "01"
+    protected $name =>
+    string(16) "UPS Next Day Air"
+    protected $cost =>
+    int(9300)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(3) "ups"
+  }
+}
 ```
 
 ## USPS (Stub) Example
@@ -126,20 +162,38 @@ $usps_rates = $usps->get_rates();
 Output array sorted by cost: (in cents)
 
 ```php
-array (
-  1 => 
-  array (
-    'code' => '4',
-    'name' => 'Parcel Post',
-    'cost' => 1000,
-  ),
-  0 => 
-  array (
-    'code' => '1',
-    'name' => 'Priority Mail',
-    'cost' => 1200,
-  ),
-)
+array(2) {
+  [0] =>
+  class pdt256\Shipping\Quote#30 (6) {
+    protected $code =>
+    string(1) "4"
+    protected $name =>
+    string(11) "Parcel Post"
+    protected $cost =>
+    int(1001)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(4) "usps"
+  }
+  [1] =>
+  class pdt256\Shipping\Quote#26 (6) {
+    protected $code =>
+    string(1) "1"
+    protected $name =>
+    string(13) "Priority Mail"
+    protected $cost =>
+    int(1220)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(4) "usps"
+  }
+}
 ```
 
 ## Fedex (Stub) Example
@@ -172,40 +226,89 @@ $fedex_rates = $fedex->get_rates();
 Output array sorted by cost: (in cents)
 
 ```php
-array (
-  3 => 
-  array (
-    'code' => 'GROUND_HOME_DELIVERY',
-    'name' => 'Ground Home Delivery',
-    'cost' => 1600,
-    'delivery_ts' => NULL,
-    'transit_time' => 'THREE_DAYS',
-  ),
-  2 => 
-  array (
-    'code' => 'FEDEX_EXPRESS_SAVER',
-    'name' => 'Fedex Express Saver',
-    'cost' => 2900,
-    'delivery_ts' => '2014-09-30T20:00:00',
-    'transit_time' => NULL,
-  ),
-  1 => 
-  array (
-    'code' => 'FEDEX_2_DAY',
-    'name' => 'Fedex 2 Day',
-    'cost' => 4000,
-    'delivery_ts' => '2014-09-29T20:00:00',
-    'transit_time' => NULL,
-  ),
-  0 => 
-  array (
-    'code' => 'STANDARD_OVERNIGHT',
-    'name' => 'Standard Overnight',
-    'cost' => 7800,
-    'delivery_ts' => '2014-09-26T20:00:00',
-    'transit_time' => NULL,
-  ),
-)
+array(4) {
+  [0] =>
+  class pdt256\Shipping\Quote#65 (6) {
+    protected $code =>
+    string(20) "GROUND_HOME_DELIVERY"
+    protected $name =>
+    string(20) "Ground Home Delivery"
+    protected $cost =>
+    int(1600)
+    protected $transit_time =>
+    string(10) "THREE_DAYS"
+    protected $delivery_ts =>
+    NULL
+    protected $carrier =>
+    string(5) "fedex"
+  }
+  [1] =>
+  class pdt256\Shipping\Quote#63 (6) {
+    protected $code =>
+    string(19) "FEDEX_EXPRESS_SAVER"
+    protected $name =>
+    string(19) "Fedex Express Saver"
+    protected $cost =>
+    int(2900)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    class Carbon\Carbon#23 (3) {
+      public $date =>
+      string(26) "2014-09-30 20:00:00.000000"
+      public $timezone_type =>
+      int(3)
+      public $timezone =>
+      string(16) "America/New_York"
+    }
+    protected $carrier =>
+    string(5) "fedex"
+  }
+  [2] =>
+  class pdt256\Shipping\Quote#61 (6) {
+    protected $code =>
+    string(11) "FEDEX_2_DAY"
+    protected $name =>
+    string(11) "Fedex 2 Day"
+    protected $cost =>
+    int(4000)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    class Carbon\Carbon#26 (3) {
+      public $date =>
+      string(26) "2014-09-29 20:00:00.000000"
+      public $timezone_type =>
+      int(3)
+      public $timezone =>
+      string(16) "America/New_York"
+    }
+    protected $carrier =>
+    string(5) "fedex"
+  }
+  [3] =>
+  class pdt256\Shipping\Quote#60 (6) {
+    protected $code =>
+    string(18) "STANDARD_OVERNIGHT"
+    protected $name =>
+    string(18) "Standard Overnight"
+    protected $cost =>
+    int(7800)
+    protected $transit_time =>
+    NULL
+    protected $delivery_ts =>
+    class Carbon\Carbon#58 (3) {
+      public $date =>
+      string(26) "2014-09-26 20:00:00.000000"
+      public $timezone_type =>
+      int(3)
+      public $timezone =>
+      string(16) "America/New_York"
+    }
+    protected $carrier =>
+    string(5) "fedex"
+  }
+}
 ```
 
 ### License
