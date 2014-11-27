@@ -22,7 +22,9 @@ Create a shipment object:
 
 ```php
 $shipment = new Shipment;
-$shipment->setFromStateProvinceCode('IN')->setFromPostalCode('46205')
+$shipment
+    ->setFromStateProvinceCode('IN')
+    ->setFromPostalCode('46205')
     ->setFromCountryCode('US')
     ->setToPostalCode('20101')
     ->setToCountryCode('US')
@@ -30,8 +32,7 @@ $shipment->setFromStateProvinceCode('IN')->setFromPostalCode('46205')
 
 $package = new Package;
 $package->setLength(12)->setWidth(4)->setHeight(3)->setWeight(3);
-$package->setPackaging(Package::USPS_CONTAINER_RECTANGULAR);
-$package->setSizeClassification(Package::USPS_SIZE_LARGE);
+
 $shipment->addPackage($package);
 ```
 
