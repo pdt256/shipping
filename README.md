@@ -21,23 +21,18 @@ Add the following lines to your ``composer.json`` file.
 Create a shipment object:
 
 ```php
-$shipment = [
-	'weight' => 3, // lbs
-	'dimensions' => [
-		'width' => 9, // inches
-		'length' => 9,
-		'height' => 9,
-	],
-	'from' => [
-		'postal_code' => '90401',
-		'country_code' => 'US',
-	],
-	'to' => [
-		'postal_code' => '78703',
-		'country_code' => 'US',
-		'is_residential' => TRUE,
-	],
-];
+$shipment = new Shipment;
+$shipment->setFromStateProvinceCode('IN')->setFromPostalCode('46205')
+    ->setFromCountryCode('US')
+    ->setToPostalCode('20101')
+    ->setToCountryCode('US')
+    ->setToResidential(true);
+
+$package = new Package;
+$package->setLength(12)->setWidth(4)->setHeight(3)->setWeight(3);
+$package->setPackaging(Package::USPS_CONTAINER_RECTANGULAR);
+$package->setSizeClassification(Package::USPS_SIZE_LARGE);
+$shipment->addPackage($package);
 ```
 
 ## UPS (Stub) Example
@@ -116,10 +111,7 @@ $usps = new USPS\Rate([
 	'prod'     => FALSE,
 	'username' => 'XXXX',
 	'password' => 'XXXX',
-	'shipment' => array_merge($shipment, [
-		'size' => 'LARGE',
-		'container' => 'RECTANGULAR',
-	]),
+	'shipment' => $shipment,
 	'approved_codes'  => [
 		'1', // 1-3 business days
 		'4', // 2-8 business days
@@ -162,9 +154,7 @@ $fedex = new Fedex\Rate([
 	'account_number' => 'XXXX',
 	'meter_number'   => 'XXXX',
 	'drop_off_type'  => 'BUSINESS_SERVICE_CENTER',
-	'shipment'       => array_merge($shipment, [
-		'packaging_type' => 'YOUR_PACKAGING',
-	]),
+	'shipment'       => $shipment,
 	'approved_codes'  => [
 		'FEDEX_EXPRESS_SAVER',  // 1-3 business days
 		'FEDEX_GROUND',         // 1-5 business days
