@@ -184,6 +184,9 @@ class Rate extends RateAdapter
 				<Weight>' . $pounds . '</Weight>
 			</PackageWeight>
 		</Package>
+		<RateInformation>
+			<NegotiatedRatesIndicator/>
+		</RateInformation>
 	</Shipment>
 </RatingServiceSelectionRequest>';
 
