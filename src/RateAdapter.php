@@ -43,11 +43,11 @@ abstract class RateAdapter
 			->process()
 			->sort_by_cost();
 
-		return $this->rates;
+		return array_values($this->rates);
 	}
 
 	protected function sort_by_cost()
 	{
-		uasort($this->rates, create_function('$a, $b', 'return ($a["cost"] > $b["cost"]);'));
+		uasort($this->rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
 	}
 }

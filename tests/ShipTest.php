@@ -1,5 +1,7 @@
 <?php
+use Carbon\Carbon;
 use pdt256\Shipping\Package;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\Ship;
 use pdt256\Shipping\Shipment;
 use pdt256\Shipping\USPS;
@@ -123,18 +125,23 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$usps = new USPS\Rate($this->getUSPSOptions());
 		$usps_rates = $usps->get_rates();
 
-		$this->assertEquals(json_encode([
-			1 => [
-				'code' => '4',
-				'name' => 'Parcel Post',
-				'cost' => 1001,
-			],
-			0 => [
-				'code' => '1',
-				'name' => 'Priority Mail',
-				'cost' => 1220,
-			],
-		]), json_encode($usps_rates));
+		$post = new Quote;
+		$post
+			->setCarrier('usps')
+			->setCode(4)
+			->setName('Parcel Post')
+			->setCost(1001);
+
+		$priority = new Quote;
+		$priority
+			->setCarrier('usps')
+			->setCode(1)
+			->setName('Priority Mail')
+			->setCost(1220);
+
+		$expected_return = [$post, $priority];
+
+		$this->assertEquals($expected_return, $usps_rates);
 	}
 
 	public function testUPSRate()
@@ -142,28 +149,37 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$ups = new UPS\Rate($this->getUPSOptions());
 		$ups_rates = $ups->get_rates();
 
-		$this->assertEquals(json_encode([
-			0 => [
-				'code' => '03',
-				'name' => 'UPS Ground',
-				'cost' => 1900,
-			],
-			1 => [
-				'code' => '02',
-				'name' => 'UPS 2nd Day Air',
-				'cost' => 4900,
-			],
-			2 => [
-				'code' => '13',
-				'name' => 'UPS Next Day Air Saver',
-				'cost' => 8900,
-			],
-			3 => [
-				'code' => '01',
-				'name' => 'UPS Next Day Air',
-				'cost' => 9300,
-			],
-		]), json_encode($ups_rates));
+		$ground = new Quote;
+		$ground
+			->setCarrier('ups')
+			->setCode('03')
+			->setName('UPS Ground')
+			->setCost(1900);
+
+		$twodayair = new Quote;
+		$twodayair
+			->setCarrier('ups')
+			->setCode('02')
+			->setName('UPS 2nd Day Air')
+			->setCost(4900);
+
+		$nextdaysaver = new Quote;
+		$nextdaysaver
+			->setCarrier('ups')
+			->setCode('13')
+			->setName('UPS Next Day Air Saver')
+			->setCost(8900);
+
+		$nextdayair = new Quote;
+		$nextdayair
+			->setCarrier('ups')
+			->setCode('01')
+			->setName('UPS Next Day Air')
+			->setCost(9300);
+
+		$expected_return = [$ground, $twodayair, $nextdaysaver, $nextdayair];
+
+		$this->assertEquals($expected_return, $ups_rates);
 	}
 
 	public function testFedexRate()
@@ -171,36 +187,44 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$fedex = new Fedex\Rate($this->getFedexOptions());
 		$fedex_rates = $fedex->get_rates();
 
-		$this->assertEquals(json_encode([
-			3 => [
-				'code' => 'GROUND_HOME_DELIVERY',
-				'name' => 'Ground Home Delivery',
-				'cost' => 1600,
-				'delivery_ts' => NULL,
-				'transit_time' => 'THREE_DAYS',
-			],
-			2 => [
-				'code' => 'FEDEX_EXPRESS_SAVER',
-				'name' => 'Fedex Express Saver',
-				'cost' => 2900,
-				'delivery_ts' => '2014-09-30T20:00:00',
-				'transit_time' => NULL,
-			],
-			1 => [
-				'code' => 'FEDEX_2_DAY',
-				'name' => 'Fedex 2 Day',
-				'cost' => 4000,
-				'delivery_ts' => '2014-09-29T20:00:00',
-				'transit_time' => NULL,
-			],
-			0 => [
-			    'code' => 'STANDARD_OVERNIGHT',
-			    'name' => 'Standard Overnight',
-			    'cost' => 7800,
-			    'delivery_ts' => '2014-09-26T20:00:00',
-			    'transit_time' => NULL,
-			],
-		]), json_encode($fedex_rates));
+		$ground = new Quote;
+		$ground
+			->setCarrier('fedex')
+			->setCode('GROUND_HOME_DELIVERY')
+			->setName('Ground Home Delivery')
+			->setCost(1600)
+			->setTransitTime('THREE_DAYS');
+
+		$express = new Quote;
+		$express
+			->setCarrier('fedex')
+			->setCode('FEDEX_EXPRESS_SAVER')
+			->setName('Fedex Express Saver')
+			->setCost(2900)
+			->setDeliveryEstimate(new Carbon('2014-09-30T20:00:00'))
+			->setTransitTime(null);
+
+		$secondday = new Quote;
+		$secondday
+			->setCarrier('fedex')
+			->setCode('FEDEX_2_DAY')
+			->setName('Fedex 2 Day')
+			->setCost(4000)
+			->setDeliveryEstimate(new Carbon('2014-09-29T20:00:00'))
+			->setTransitTime(null);
+
+		$overnight = new Quote;
+		$overnight
+			->setCarrier('fedex')
+			->setCode('STANDARD_OVERNIGHT')
+			->setName('Standard Overnight')
+			->setCost(7800)
+			->setDeliveryEstimate(new Carbon('2014-09-26T20:00:00'))
+			->setTransitTime(null);
+
+		$expected_result = [$ground, $express, $secondday, $overnight];
+
+		$this->assertEquals($expected_result, $fedex_rates);
 	}
 
 	public function testDisplayOptions()
@@ -219,102 +243,36 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$ship = Ship::factory($this->shipping_options);
 		$display_rates = $ship->get_display_rates($rates);
 
-		$this->assertEquals(json_encode([
+		$post = new Quote;
+		$post->setCode(4)
+			->setName('Parcel Post')
+			->setCost(1001)
+			->setCarrier('usps');
+
+		$fedex_two_day = new Quote;
+		$fedex_two_day->setCode('FEDEX_2_DAY')
+			->setName('Fedex 2 Day')
+			->setCost(4000)
+			->setDeliveryEstimate(new Carbon('2014-09-29T20:00:00'))
+			->setCarrier('fedex');
+
+		$overnight = new Quote;
+		$overnight->setCode('STANDARD_OVERNIGHT')
+			->setName('Standard Overnight')
+			->setCost(7800)
+			->setDeliveryEstimate(new Carbon('2014-09-26T20:00:00'))
+			->setCarrier('fedex');
+
+		$this->assertEquals([
 			'Standard Shipping' => [
-				0 => [
-					'code' => '4',
-					'name' => 'Parcel Post',
-					'cost' => 1001,
-					'carrier' => 'usps',
-				],
+				$post,
 			],
 			'Two-Day Shipping' => [
-				0 => [
-					'code' => 'FEDEX_2_DAY',
-					'name' => 'Fedex 2 Day',
-					'cost' => 4000,
-					'delivery_ts' => '2014-09-29T20:00:00',
-					'transit_time' => NULL,
-					'carrier' => 'fedex',
-				],
+				$fedex_two_day,
 			],
 			'One-Day Shipping' => [
-				0 => [
-					'code' => 'STANDARD_OVERNIGHT',
-					'name' => 'Standard Overnight',
-					'cost' => 7800,
-					'delivery_ts' => '2014-09-26T20:00:00',
-					'transit_time' => NULL,
-					'carrier' => 'fedex',
-				],
+				$overnight,
 			],
-		]), json_encode($display_rates));
+		], $display_rates);
 	}
-
-	// // Readme Examples:
-	// public function testUSPSReadmeExample()
-	// {
-	// 	$usps = new USPS\Rate([
-	// 		'prod'     => FALSE,
-	// 		'username' => 'XXXX',
-	// 		'password' => 'XXXX',
-	// 		'shipment' => array_merge($this->shipment, [
-	// 			'size' => 'LARGE',
-	// 			'container' => 'RECTANGULAR',
-	// 		]),
-	// 		'approved_codes'  => [
-	// 			'1', // 1-3 business days
-	// 			'4', // 2-8 business days
-	// 		],
-	// 		'request_adapter' => new RateRequest\StubUSPS(),
-	// 	]);
-	//
-	// 	$usps_rates = $usps->get_rates();
-	// 	var_export($usps_rates);
-	// }
-	//
-	// public function testUPSReadmeExample()
-	// {
-	// 	$ups = new UPS\Rate([
-	// 		'prod'            => FALSE,
-	// 		'shipment'        => $this->shipment,
-	// 		'approved_codes'  => [
-	// 			'03', // 1-5 business days
-	// 			'02', // 2 business days
-	// 			'01', // next business day 10:30am
-	// 			'13', // next business day by 3pm
-	// 			'14', // next business day by 8am
-	// 		],
-	// 		'request_adapter' => new RateRequest\StubUPS(),
-	// 	]);
-	//
-	// 	$ups_rates = $ups->get_rates();
-	// 	var_export($ups_rates);
-	// }
-	//
-	// public function testFedexReadmeExample()
-	// {
-	// 	$fedex = new Fedex\Rate([
-	// 		'prod'           => FALSE,
-	// 		'key'            => 'XXXX',
-	// 		'password'       => 'XXXX',
-	// 		'account_number' => 'XXXX',
-	// 		'meter_number'   => 'XXXX',
-	// 		'drop_off_type'  => 'BUSINESS_SERVICE_CENTER',
-	// 		'shipment'       => array_merge($this->shipment, [
-	// 			'packaging_type' => 'YOUR_PACKAGING',
-	// 		]),
-	// 		'approved_codes'  => [
-	// 			'FEDEX_EXPRESS_SAVER',  // 1-3 business days
-	// 			'FEDEX_GROUND',         // 1-5 business days
-	// 			'GROUND_HOME_DELIVERY', // 1-5 business days
-	// 			'FEDEX_2_DAY',          // 2 business days
-	// 			'STANDARD_OVERNIGHT',   // overnight
-	// 		],
-	// 		'request_adapter' => new RateRequest\StubFedex(),
-	// 	]);
-	//
-	// 	$fedex_rates = $fedex->get_rates();
-	// 	var_export($fedex_rates);
-	// }
 }

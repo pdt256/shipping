@@ -1,8 +1,10 @@
 <?php
 namespace pdt256\Shipping\Fedex;
 
+use Carbon\Carbon;
 use pdt256\Shipping;
 use pdt256\Shipping\Arr;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
 use DOMDocument;
@@ -220,13 +222,18 @@ class Rate extends RateAdapter
 				->getElementsByTagName('TotalNetCharge')->item(0)
 				->getElementsByTagName('Amount')->item(0)->nodeValue;
 
-			$this->rates[] = array(
-				'code' => $code,
-				'name' => $name,
-				'cost' => (int) $cost * 100,
-				'delivery_ts' => $delivery_ts,
-				'transit_time' => $transit_time,
-			);
+			$quote = new Quote;
+			$quote
+				->setCarrier('fedex')
+				->setCode($code)
+				->setName($name)
+				->setCost((int) $cost * 100)
+				->setTransitTime($transit_time);
+			if ($delivery_ts) {
+				$quote->setDeliveryEstimate(new Carbon($delivery_ts));
+			}
+
+			$this->rates[] = $quote;
 		}
 
 		return $this;

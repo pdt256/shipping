@@ -3,6 +3,7 @@ namespace pdt256\Shipping\UPS;
 
 use pdt256\Ship;
 use pdt256\Shipping\Arr;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
 use DOMDocument;
@@ -233,11 +234,13 @@ class Rate extends RateAdapter
 				continue;
 			}
 
-			$this->rates[] = array(
-				'code' => $code,
-				'name' => $name,
-				'cost' => (int) $cost * 100,
-			);
+			$quote = new Quote;
+			$quote
+				->setCarrier('ups')
+				->setCode($code)
+				->setName($name)
+				->setCost((int) $cost * 100);
+			$this->rates[] = $quote;
 		}
 
 		return $this;

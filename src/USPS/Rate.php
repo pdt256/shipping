@@ -3,6 +3,7 @@ namespace pdt256\Shipping\USPS;
 
 use pdt256\Shipping;
 use pdt256\Shipping\Arr;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
 use DOMDocument;
@@ -178,6 +179,7 @@ class Rate extends RateAdapter
 			throw $e;
 		}
 
+		/** @var Quote[] $rates */
 		$rates = [];
 
 		foreach ($postage_list as $postage) {
@@ -191,16 +193,19 @@ class Rate extends RateAdapter
 			}
 
 			if (array_key_exists($code, $rates)) {
-				$cost = $rates[$code]['cost'] + ($cost * 100);
+				$cost = $rates[$code]->getCost() + ($cost * 100);
 			} else {
 				$cost = $cost * 100;
 			}
 
-			$rates[$code] = [
-				'code' => $code,
-				'name' => $name,
-				'cost' => (int) $cost,
-			];
+			$quote = new Quote;
+			$quote
+				->setCarrier('usps')
+				->setCode($code)
+				->setName($name)
+				->setCost((int) $cost);
+
+			$rates[$quote->getCode()] = $quote;
 		}
 
 		$this->rates = array_values($rates);

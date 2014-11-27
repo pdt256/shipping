@@ -9,7 +9,9 @@
             "email": "pdt256@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "nesbot/carbon": "1.*"
+    },
     "require-dev": {
         "phpunit/phpunit": "4.0.*"
     },
