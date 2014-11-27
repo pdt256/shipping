@@ -1,5 +1,7 @@
 <?php
+use pdt256\Shipping\Package;
 use pdt256\Shipping\Ship;
+use pdt256\Shipping\Shipment;
 use pdt256\Shipping\USPS;
 use pdt256\Shipping\UPS;
 use pdt256\Shipping\Fedex;
@@ -7,23 +9,8 @@ use pdt256\Shipping\RateRequest;
 
 class ShipTest extends PHPUnit_Framework_TestCase
 {
-	public $shipment = [
-		'weight' => 3, // lbs
-		'dimensions' => [
-			'width' => 9,
-			'length' => 9,
-			'height' => 9,
-		],
-		'from' => [
-			'postal_code' => '90401',
-			'country_code' => 'US',
-		],
-		'to' => [
-			'postal_code' => '78703',
-			'country_code' => 'US',
-			'is_residential' => TRUE,
-		],
-	];
+	/** @var Shipment */
+	public $shipment;
 
 	public $shipping_options = [
 		'Standard Shipping' => [
@@ -60,6 +47,29 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		],
 	];
 
+	public function setUp()
+	{
+		$s = new Shipment;
+		$s->setFromStateProvinceCode('CA')
+			->setFromPostalCode('90401')
+			->setFromCountryCode('US')
+			->setToPostalCode('78703')
+			->setToCountryCode('US')
+			->setToResidential(true);
+
+		$p = new Package;
+		$p->setWeight(3)
+			->setWidth(9)
+			->setLength(9)
+			->setHeight(9)
+			->setPackaging(Package::USPS_CONTAINER_RECTANGULAR)
+			->setSizeClassification(Package::USPS_SIZE_LARGE);
+
+		$s->addPackage($p);
+
+		$this->shipment = $s;
+	}
+
 	private function getUSPSOptions()
 	{
 		$ship = Ship::factory($this->shipping_options);
@@ -69,10 +79,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			'prod'     => FALSE,
 			'username' => 'XXXX',
 			'password' => 'XXXX',
-			'shipment' => array_merge($this->shipment, [
-				'size' => 'LARGE',
-				'container' => 'RECTANGULAR',
-			]),
+			'shipment' => $this->shipment,
 			'approved_codes' => $approved_codes,
 			'request_adapter' => new RateRequest\StubUSPS(),
 		];
@@ -100,6 +107,11 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$ship = Ship::factory($this->shipping_options);
 		$approved_codes = $ship->get_approved_codes('fedex');
 
+		$ps = $this->shipment->getPackages();
+		foreach ($ps as $p) {
+			$p->setPackaging(Package::FEDEX_YOUR_PACKAGING);
+		}
+
 		return [
 			'prod'           => FALSE,
 			'key'            => 'XXXX',
@@ -107,9 +119,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			'account_number' => 'XXXX',
 			'meter_number'   => 'XXXX',
 			'drop_off_type'  => 'BUSINESS_SERVICE_CENTER',
-			'shipment'       => array_merge($this->shipment, [
-				'packaging_type' => 'YOUR_PACKAGING',
-			]),
+			'shipment'       => $this->shipment,
 			'approved_codes'  => $approved_codes,
 			'request_adapter' => new RateRequest\StubFedex(),
 		];
@@ -124,12 +134,12 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			1 => [
 				'code' => '4',
 				'name' => 'Parcel Post',
-				'cost' => 1000,
+				'cost' => 1001,
 			],
 			0 => [
 				'code' => '1',
 				'name' => 'Priority Mail',
-				'cost' => 1200,
+				'cost' => 1220,
 			],
 		]), json_encode($usps_rates));
 	}
@@ -221,7 +231,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 				0 => [
 					'code' => '4',
 					'name' => 'Parcel Post',
-					'cost' => 1000,
+					'cost' => 1001,
 					'carrier' => 'usps',
 				],
 			],
@@ -246,114 +256,6 @@ class ShipTest extends PHPUnit_Framework_TestCase
 				],
 			],
 		]), json_encode($display_rates));
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUSPSRateMissingTo()
-	{
-		$usps_options = $this->getUSPSOptions();
-		unset($usps_options['shipment']['to']);
-
-		$usps = new USPS\Rate($usps_options);
-		$usps_rates = $usps->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUSPSRateMissingFrom()
-	{
-		$usps_options = $this->getUSPSOptions();
-		unset($usps_options['shipment']['from']);
-
-		$usps = new USPS\Rate($usps_options);
-		$usps_rates = $usps->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUSPSRateMissingDimensions()
-	{
-		$usps_options = $this->getUSPSOptions();
-		unset($usps_options['shipment']['dimensions']);
-
-		$usps = new USPS\Rate($usps_options);
-		$usps_rates = $usps->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUPSRateMissingTo()
-	{
-		$ups_options = $this->getUPSOptions();
-		unset($ups_options['shipment']['to']);
-
-		$ups = new UPS\Rate($ups_options);
-		$ups_rates = $ups->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUPSRateMissingFrom()
-	{
-		$ups_options = $this->getUPSOptions();
-		unset($ups_options['shipment']['from']);
-
-		$ups = new UPS\Rate($ups_options);
-		$ups_rates = $ups->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testUPSRateMissingDimensions()
-	{
-		$ups_options = $this->getUPSOptions();
-		unset($ups_options['shipment']['dimensions']);
-
-		$ups = new UPS\Rate($ups_options);
-		$ups_rates = $ups->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testFedexRateMissingTo()
-	{
-		$fedex_options = $this->getFedexOptions();
-		unset($fedex_options['shipment']['to']);
-
-		$fedex = new Fedex\Rate($fedex_options);
-		$fedex_rates = $fedex->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testFedexRateMissingFrom()
-	{
-		$fedex_options = $this->getFedexOptions();
-		unset($fedex_options['shipment']['from']);
-
-		$fedex = new Fedex\Rate($fedex_options);
-		$fedex_rates = $fedex->get_rates();
-	}
-
-	/**
-	* @expectedException Exception
-	*/
-	public function testFedexRateMissingDimensions()
-	{
-		$fedex_options = $this->getFedexOptions();
-		unset($fedex_options['shipment']['dimensions']);
-
-		$fedex = new Fedex\Rate($fedex_options);
-		$fedex_rates = $fedex->get_rates();
 	}
 
 	// // Readme Examples:

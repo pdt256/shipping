@@ -95,34 +95,31 @@ class Rate extends RateAdapter
 
 	protected function prepare()
 	{
-		$to = Arr::get($this->shipment, 'to');
-		$shipper = Arr::get($this->shipment, 'from');
-		$dimensions = Arr::get($this->shipment, 'dimensions');
 
-		// https://www.usps.com/business/web-tools-apis/rate-calculators-v1-7a.htm
-		$pounds = (int) Arr::get($this->shipment, 'weight');
-		$ounces = 0;
+		$packages = '';
+		$sequence_number = 0;
+		foreach ($this->shipment->getPackages() as $p) {
+			$sequence_number++;
 
-		if ($pounds < 1) {
-			throw new Exception('Weight missing');
+			$packages .= '<Package ID="' . $sequence_number .'">
+					<Service>ALL</Service>
+					<ZipOrigination>' . $this->shipment->getFromPostalCode() . '</ZipOrigination>
+					<ZipDestination>' . $this->shipment->getToPostalCode() . '</ZipDestination>
+					<Pounds>' . $p->getWeight() . '</Pounds>
+					<Ounces>0</Ounces>
+					<Container>' . $p->getPackaging() . '</Container>
+					<Size>' . $p->getSizeClassification() . '</Size>
+					<Width>' . $p->getWidth() . '</Width>
+					<Length>' . $p->getLength() . '</Length>
+					<Height>' . $p->getHeight() . '</Height>
+					<Machinable>' . 'False' . '</Machinable>
+				</Package>';
 		}
 
 		$this->data =
 '<RateV4Request USERID="' . $this->username . '">
 	<Revision/>
-	<Package ID="1">
-		<Service>ALL</Service>
-		<ZipOrigination>' . Arr::get($shipper, 'postal_code') . '</ZipOrigination>
-		<ZipDestination>' . Arr::get($to, 'postal_code') . '</ZipDestination>
-		<Pounds>' . $pounds . '</Pounds>
-		<Ounces>' . $ounces . '</Ounces>
-		<Container>' . Arr::get($this->shipment, 'container') . '</Container>
-		<Size>' . Arr::get($this->shipment, 'size') . '</Size>
-		<Width>' . Arr::get($dimensions, 'width') . '</Width>
-		<Length>' . Arr::get($dimensions, 'length') . '</Length>
-		<Height>' . Arr::get($dimensions, 'height') . '</Height>
-		<Machinable>' . 'False' . '</Machinable>
-	</Package>
+	' . $packages . '
 </RateV4Request>';
 
 		return $this;
@@ -160,6 +157,8 @@ class Rate extends RateAdapter
 			throw $e;
 		}
 
+		$rates = [];
+
 		foreach ($postage_list as $postage) {
 			$code = @$postage->getAttribute('CLASSID');
 			$cost = @$postage->getElementsByTagName('Rate')->item(0)->nodeValue;
@@ -170,12 +169,20 @@ class Rate extends RateAdapter
 				continue;
 			}
 
-			$this->rates[] = array(
+			if (array_key_exists($code, $rates)) {
+				$cost = $rates[$code]['cost'] + ($cost * 100);
+			} else {
+				$cost = $cost * 100;
+			}
+
+			$rates[$code] = [
 				'code' => $code,
 				'name' => $name,
-				'cost' => (int) $cost * 100,
-			);
+				'cost' => (int) $cost,
+			];
 		}
+
+		$this->rates = array_values($rates);
 
 		return $this;
 	}

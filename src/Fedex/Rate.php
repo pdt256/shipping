@@ -88,17 +88,6 @@ class Rate extends RateAdapter
 
 	protected function prepare()
 	{
-		$to = Arr::get($this->shipment, 'to');
-		$shipper = Arr::get($this->shipment, 'from');
-		$dimensions = Arr::get($this->shipment, 'dimensions');
-
-		$pounds = (int) Arr::get($this->shipment, 'weight');
-		$ounces = 0;
-
-		if ($pounds < 1) {
-			throw new Exception('Weight missing');
-		}
-
 		$date = time();
 		$day_name = date('l', $date);
 
@@ -110,6 +99,28 @@ class Rate extends RateAdapter
 
 		// http://www.fedex.com/templates/components/apps/wpor/secure/downloads/pdf/Aug13/PropDevGuide.pdf
 		// http://www.fedex.com/us/developer/product/WebServices/MyWebHelp_August2010/Content/Proprietary_Developer_Guide/Rate_Services_conditionalized.htm
+
+
+		$packages = '';
+		$sequence_number = 0;
+		foreach ($this->shipment->getPackages() as $p) {
+			$sequence_number++;
+
+			$packages .= '<RequestedPackageLineItems>
+						<SequenceNumber>' . $sequence_number . '</SequenceNumber>
+						<GroupPackageCount>1</GroupPackageCount>
+						<Weight>
+							<Units>LB</Units>
+							<Value>' . $p->getWeight() . '</Value>
+						</Weight>
+						<Dimensions>
+							<Length>' . $p->getLength() . '</Length>
+							<Width>' . $p->getWidth() . '</Width>
+							<Height>' . $p->getHeight() . '</Height>
+							<Units>IN</Units>
+						</Dimensions>
+					</RequestedPackageLineItems>';
+		}
 
 		$this->data =
 '<?xml version="1.0"?>
@@ -136,37 +147,24 @@ class Rate extends RateAdapter
 	<RequestedShipment>
 		<ShipTimestamp>' . date('c') . '</ShipTimestamp>
 		<DropoffType>' . $this->drop_off_type . '</DropoffType>
-		<PackagingType>' . Arr::get($this->shipment, 'packaging_type') . '</PackagingType>
+		<PackagingType>YOUR_PACKAGING</PackagingType>
 		<Shipper>
 			<Address>
-				<PostalCode>' . Arr::get($shipper, 'postal_code') . '</PostalCode>
-				<CountryCode>' . Arr::get($shipper, 'country_code') . '</CountryCode>
-				' . ((Arr::get($shipper, 'is_residential')) ? '<Residential>1</Residential>' : '') . '
+				<PostalCode>' . $this->shipment->getFromPostalCode() . '</PostalCode>
+				<CountryCode>' . $this->shipment->getFromCountryCode() . '</CountryCode>
+				' . (($this->shipment->isFromResidential()) ? '<Residential>1</Residential>' : '') . '
 			</Address>
 		</Shipper>
 		<Recipient>
 			<Address>
-				<PostalCode>' . Arr::get($to, 'postal_code') . '</PostalCode>
-				<CountryCode>' . Arr::get($to, 'country_code') . '</CountryCode>
-				' . ((Arr::get($to, 'is_residential')) ? '<Residential>1</Residential>' : '') . '
+				<PostalCode>' . $this->shipment->getToPostalCode() . '</PostalCode>
+				<CountryCode>' . $this->shipment->getToCountryCode() . '</CountryCode>
+				' . (($this->shipment->isToResidential()) ? '<Residential>1</Residential>' : '') . '
 			</Address>
 		</Recipient>
 		<RateRequestTypes>LIST</RateRequestTypes>
-		<PackageCount>1</PackageCount>
-		<RequestedPackageLineItems>
-			<SequenceNumber>1</SequenceNumber>
-			<GroupPackageCount>1</GroupPackageCount>
-			<Weight>
-				<Units>LB</Units>
-				<Value>' . $pounds . '</Value>
-			</Weight>
-			<Dimensions>
-				<Length>' . Arr::get($dimensions, 'length') . '</Length>
-				<Width>' . Arr::get($dimensions, 'width') . '</Width>
-				<Height>' . Arr::get($dimensions, 'height') . '</Height>
-				<Units>IN</Units>
-			</Dimensions>
-		</RequestedPackageLineItems>
+		<PackageCount>' . $this->shipment->packageCount() . '</PackageCount>
+		' . $packages . '
 	</RequestedShipment>
 </RateRequest>
 </SOAP-ENV:Body>
