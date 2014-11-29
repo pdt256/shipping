@@ -119,8 +119,10 @@ class Rate extends RateAdapter
 			 */
 			if ($p->getWidth() > 12 or $p->getLength() > 12 or $p->getHeight() > 12) {
 				$size = 'LARGE';
+				$container = 'RECTANGULAR';
 			} else {
 				$size = 'REGULAR';
+				$container = 'VARIABLE';
 			}
 
 			$packages .= '<Package ID="' . $sequence_number .'">
@@ -129,7 +131,7 @@ class Rate extends RateAdapter
 					<ZipDestination>' . $this->shipment->getToPostalCode() . '</ZipDestination>
 					<Pounds>' . $p->getWeight() . '</Pounds>
 					<Ounces>0</Ounces>
-					<Container>RECTANGULAR</Container>
+					<Container>' . $container . '</Container>
 					<Size>' . $size . '</Size>
 					<Width>' . $p->getWidth() . '</Width>
 					<Length>' . $p->getLength() . '</Length>
