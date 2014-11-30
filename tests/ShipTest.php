@@ -124,12 +124,12 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			1 => [
 				'code' => '4',
 				'name' => 'Parcel Post',
-				'cost' => 1000,
+				'cost' => 1001,
 			],
 			0 => [
 				'code' => '1',
 				'name' => 'Priority Mail',
-				'cost' => 1200,
+				'cost' => 1220,
 			],
 		]), json_encode($usps_rates));
 	}
@@ -143,22 +143,22 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			0 => [
 				'code' => '03',
 				'name' => 'UPS Ground',
-				'cost' => 1900,
+				'cost' => 1910,
 			],
 			1 => [
 				'code' => '02',
 				'name' => 'UPS 2nd Day Air',
-				'cost' => 4900,
+				'cost' => 4923,
 			],
 			2 => [
 				'code' => '13',
 				'name' => 'UPS Next Day Air Saver',
-				'cost' => 8900,
+				'cost' => 8954,
 			],
 			3 => [
 				'code' => '01',
 				'name' => 'UPS Next Day Air',
-				'cost' => 9300,
+				'cost' => 9328,
 			],
 		]), json_encode($ups_rates));
 	}
@@ -172,28 +172,28 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			3 => [
 				'code' => 'GROUND_HOME_DELIVERY',
 				'name' => 'Ground Home Delivery',
-				'cost' => 1600,
+				'cost' => 1655,
 				'delivery_ts' => NULL,
 				'transit_time' => 'THREE_DAYS',
 			],
 			2 => [
 				'code' => 'FEDEX_EXPRESS_SAVER',
 				'name' => 'Fedex Express Saver',
-				'cost' => 2900,
+				'cost' => 2989,
 				'delivery_ts' => '2014-09-30T20:00:00',
 				'transit_time' => NULL,
 			],
 			1 => [
 				'code' => 'FEDEX_2_DAY',
 				'name' => 'Fedex 2 Day',
-				'cost' => 4000,
+				'cost' => 4072,
 				'delivery_ts' => '2014-09-29T20:00:00',
 				'transit_time' => NULL,
 			],
 			0 => [
 			    'code' => 'STANDARD_OVERNIGHT',
 			    'name' => 'Standard Overnight',
-			    'cost' => 7800,
+			    'cost' => 7834,
 			    'delivery_ts' => '2014-09-26T20:00:00',
 			    'transit_time' => NULL,
 			],
@@ -221,7 +221,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 				0 => [
 					'code' => '4',
 					'name' => 'Parcel Post',
-					'cost' => 1000,
+					'cost' => 1001,
 					'carrier' => 'usps',
 				],
 			],
@@ -229,7 +229,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 				0 => [
 					'code' => 'FEDEX_2_DAY',
 					'name' => 'Fedex 2 Day',
-					'cost' => 4000,
+					'cost' => 4072,
 					'delivery_ts' => '2014-09-29T20:00:00',
 					'transit_time' => NULL,
 					'carrier' => 'fedex',
@@ -239,7 +239,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 				0 => [
 					'code' => 'STANDARD_OVERNIGHT',
 					'name' => 'Standard Overnight',
-					'cost' => 7800,
+					'cost' => 7834,
 					'delivery_ts' => '2014-09-26T20:00:00',
 					'transit_time' => NULL,
 					'carrier' => 'fedex',
