@@ -173,7 +173,7 @@ class Rate extends RateAdapter
 			$this->rates[] = array(
 				'code' => $code,
 				'name' => $name,
-				'cost' => (int) $cost * 100,
+				'cost' => (int) ($cost * 100),
 			);
 		}
 
