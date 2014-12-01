@@ -1,5 +1,4 @@
 <?php
-use Carbon\Carbon;
 use pdt256\Shipping\Package;
 use pdt256\Shipping\Quote;
 use pdt256\Shipping\Ship;
@@ -201,7 +200,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			->setCode('FEDEX_EXPRESS_SAVER')
 			->setName('Fedex Express Saver')
 			->setCost(2900)
-			->setDeliveryEstimate(new Carbon('2014-09-30T20:00:00'))
+			->setDeliveryEstimate(new DateTime('2014-09-30T20:00:00'))
 			->setTransitTime(null);
 
 		$secondday = new Quote;
@@ -210,7 +209,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			->setCode('FEDEX_2_DAY')
 			->setName('Fedex 2 Day')
 			->setCost(4000)
-			->setDeliveryEstimate(new Carbon('2014-09-29T20:00:00'))
+			->setDeliveryEstimate(new DateTime('2014-09-29T20:00:00'))
 			->setTransitTime(null);
 
 		$overnight = new Quote;
@@ -219,7 +218,7 @@ class ShipTest extends PHPUnit_Framework_TestCase
 			->setCode('STANDARD_OVERNIGHT')
 			->setName('Standard Overnight')
 			->setCost(7800)
-			->setDeliveryEstimate(new Carbon('2014-09-26T20:00:00'))
+			->setDeliveryEstimate(new DateTime('2014-09-26T20:00:00'))
 			->setTransitTime(null);
 
 		$expected_result = [$ground, $express, $secondday, $overnight];
@@ -253,14 +252,14 @@ class ShipTest extends PHPUnit_Framework_TestCase
 		$fedex_two_day->setCode('FEDEX_2_DAY')
 			->setName('Fedex 2 Day')
 			->setCost(4000)
-			->setDeliveryEstimate(new Carbon('2014-09-29T20:00:00'))
+			->setDeliveryEstimate(new DateTime('2014-09-29T20:00:00'))
 			->setCarrier('fedex');
 
 		$overnight = new Quote;
 		$overnight->setCode('STANDARD_OVERNIGHT')
 			->setName('Standard Overnight')
 			->setCost(7800)
-			->setDeliveryEstimate(new Carbon('2014-09-26T20:00:00'))
+			->setDeliveryEstimate(new DateTime('2014-09-26T20:00:00'))
 			->setCarrier('fedex');
 
 		$this->assertEquals([

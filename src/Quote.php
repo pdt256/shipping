@@ -1,6 +1,6 @@
 <?php namespace pdt256\Shipping;
 
-use Carbon\Carbon;
+use DateTime;
 
 class Quote
 {
@@ -112,10 +112,10 @@ class Quote
     }
 
     /**
-     * @param Carbon $estimate
+     * @param DateTime $estimate
      * @return $this
      */
-    public function setDeliveryEstimate(Carbon $estimate)
+    public function setDeliveryEstimate(DateTime $estimate)
     {
         $this->delivery_ts = $estimate;
         return $this;

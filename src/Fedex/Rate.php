@@ -1,7 +1,7 @@
 <?php
 namespace pdt256\Shipping\Fedex;
 
-use Carbon\Carbon;
+use DateTime;
 use pdt256\Shipping;
 use pdt256\Shipping\Arr;
 use pdt256\Shipping\Quote;
@@ -230,7 +230,7 @@ class Rate extends RateAdapter
 				->setCost((int) $cost * 100)
 				->setTransitTime($transit_time);
 			if ($delivery_ts) {
-				$quote->setDeliveryEstimate(new Carbon($delivery_ts));
+				$quote->setDeliveryEstimate(new DateTime($delivery_ts));
 			}
 
 			$this->rates[] = $quote;
