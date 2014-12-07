@@ -103,6 +103,22 @@ class Rate extends RateAdapter
 			throw new Exception('Weight missing');
 		}
 
+		$size = Arr::get($this->shipment, 'size');
+
+		// If user has not specified size, determine it automatically
+		// https://www.usps.com/business/web-tools-apis/rate-calculator-api.htm#_Toc378922331
+		if ($size === null) {
+			// Size is considered large if any dimension is larger than 12 inches
+			foreach ($dimensions as $dimension) {
+				if ($dimension > 12) {
+					$size = 'LARGE';
+					break;
+				}
+			}
+			if (!isset($size)) {
+				$size = 'REGULAR';
+			}
+		}
 		$this->data =
 '<RateV4Request USERID="' . $this->username . '">
 	<Revision/>
@@ -113,7 +129,7 @@ class Rate extends RateAdapter
 		<Pounds>' . $pounds . '</Pounds>
 		<Ounces>' . $ounces . '</Ounces>
 		<Container>' . Arr::get($this->shipment, 'container') . '</Container>
-		<Size>' . Arr::get($this->shipment, 'size') . '</Size>
+		<Size>' . $size . '</Size>
 		<Width>' . Arr::get($dimensions, 'width') . '</Width>
 		<Length>' . Arr::get($dimensions, 'length') . '</Length>
 		<Height>' . Arr::get($dimensions, 'height') . '</Height>
