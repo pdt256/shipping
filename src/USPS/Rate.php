@@ -78,10 +78,6 @@ class Rate extends RateAdapter
 			$this->password = $options['password'];
 		}
 
-		if (isset($options['username'])) {
-			$this->username = $options['username'];
-		}
-
 		if (isset($options['approved_codes'])) {
 			$this->approved_codes = $options['approved_codes'];
 		}
