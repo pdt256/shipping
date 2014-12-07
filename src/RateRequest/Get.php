@@ -16,7 +16,9 @@ class Get extends Adapter
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->curl_dl_timeout);
 		$response = curl_exec($ch);
 		curl_close($ch);
-
+		if ($response === false) {
+			throw new RequestException(curl_error($ch));
+		}
 		return $response;
 	}
 }
