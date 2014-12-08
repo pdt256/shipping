@@ -1,7 +1,6 @@
 <?php
 namespace pdt256\Shipping\UPS;
 
-use pdt256\Ship;
 use pdt256\Shipping\Arr;
 use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
