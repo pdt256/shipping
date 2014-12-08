@@ -1,8 +1,21 @@
 ## PHP Shipping API
 
-[![Total Downloads](https://poser.pugx.org/pdt256/shipping/downloads.svg)](https://packagist.org/packages/pdt256/shipping) [![Latest Stable Version](https://poser.pugx.org/pdt256/shipping/v/stable.svg)](https://packagist.org/packages/pdt256/shipping) [![Latest Unstable Version](https://poser.pugx.org/pdt256/shipping/v/unstable.svg)](https://packagist.org/packages/pdt256/shipping) [![License](https://poser.pugx.org/pdt256/shipping/license.svg)](https://packagist.org/packages/pdt256/shipping)
+[![Test Coverage](http://img.shields.io/badge/coverage-85%25-green.svg)]
+[![Build Status](https://travis-ci.org/pdt256/shipping.svg?branch=master)](https://travis-ci.org/pdt256/shipping)
+[![Downloads](https://img.shields.io/packagist/dt/pdt256/shipping.svg)](https://packagist.org/packages/pdt256/shipping)
+[![License](https://img.shields.io/packagist/l/pdt256/shipping.svg)](https://github.com/pdt256/shipping/blob/master/LICENSE.txt)
 
 A shipping rate wrapper for USPS, UPS, and Fedex.
+
+## Introduction
+
+This is a PHP shipping package that wraps API calls to UPS, FedEx, and USPS for shipping rates.
+Multiple packages can be added to get additional rates.
+
+All code (including tests) conform to the PSR-2 coding standards.
+The namespace and autoloader are using the PSR-4 standard.
+
+All pull requests are processed by Travis CI to conform to PSR-2 and to verify all unit tests pass. 
 
 ## Installation
 
@@ -10,9 +23,9 @@ Add the following lines to your ``composer.json`` file.
 
 ```JSON
 {
-	"require": {
-		"pdt256/shipping": "dev-master"
-	}
+    "require": {
+        "pdt256/shipping": "1.0.*@dev"
+    }
 }
 ```
 
@@ -23,15 +36,20 @@ Create a shipment object:
 ```php
 $shipment = new Shipment;
 $shipment
+    ->setFromIsResidential(false)
     ->setFromStateProvinceCode('IN')
     ->setFromPostalCode('46205')
     ->setFromCountryCode('US')
+    ->setToIsResidential(true);
     ->setToPostalCode('20101')
     ->setToCountryCode('US')
-    ->setToResidential(true);
 
 $package = new Package;
-$package->setLength(12)->setWidth(4)->setHeight(3)->setWeight(3);
+$package
+    ->setLength(12)
+    ->setWidth(4)
+    ->setHeight(3)
+    ->setWeight(3);
 
 $shipment->addPackage($package);
 ```
@@ -44,7 +62,7 @@ Notice: The below line uses a stub class to fake a response from the UPS API.
 You can immediately use this method in your code until you get an account with UPS.
 
 ```php
-'request_adapter' => new RateRequest\StubUPS(),
+'requestAdapter' => new RateRequest\StubUPS(),
 ```
 
 ```php
@@ -52,23 +70,23 @@ use pdt256\Shipping\UPS;
 use pdt256\Shipping\RateRequest;
 
 $ups = new UPS\Rate([
-	'prod'            => FALSE,
-	'access_key'      => 'XXXX',
-	'user_id'         => 'XXXX',
-	'password'        => 'XXXX',
-	'shipper_number'  => 'XXXX',
-	'shipment'        => $shipment,
-	'approved_codes'  => [
-		'03', // 1-5 business days
-		'02', // 2 business days
-		'01', // next business day 10:30am
-		'13', // next business day by 3pm
-		'14', // next business day by 8am
-	],
-	'request_adapter' => new RateRequest\StubUPS(),
+    'prod'           => FALSE,
+    'accessKey'      => 'XXXX',
+    'userId'         => 'XXXX',
+    'password'       => 'XXXX',
+    'shipperNumber'  => 'XXXX',
+    'shipment'       => $shipment,
+    'approvedCodes'  => [
+        '03', // 1-5 business days
+        '02', // 2 business days
+        '01', // next business day 10:30am
+        '13', // next business day by 3pm
+        '14', // next business day by 8am
+    ],
+    'requestAdapter' => new RateRequest\StubUPS(),
 ]);
 
-$ups_rates = $ups->get_rates();
+$upsRates = $ups->getRates();
 ```
 
 Output array sorted by cost: (in cents)
@@ -83,9 +101,9 @@ array(4) {
     string(10) "UPS Ground"
     protected $cost =>
     int(1900)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(3) "ups"
@@ -98,9 +116,9 @@ array(4) {
     string(15) "UPS 2nd Day Air"
     protected $cost =>
     int(4900)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(3) "ups"
@@ -113,9 +131,9 @@ array(4) {
     string(22) "UPS Next Day Air Saver"
     protected $cost =>
     int(8900)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(3) "ups"
@@ -128,9 +146,9 @@ array(4) {
     string(16) "UPS Next Day Air"
     protected $cost =>
     int(9300)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(3) "ups"
@@ -149,14 +167,14 @@ $usps = new USPS\Rate([
 	'username' => 'XXXX',
 	'password' => 'XXXX',
 	'shipment' => $shipment,
-	'approved_codes'  => [
+	'approvedCodes'  => [
 		'1', // 1-3 business days
 		'4', // 2-8 business days
 	],
-	'request_adapter' => new RateRequest\StubUSPS(),
+	'requestAdapter' => new RateRequest\StubUSPS(),
 ]);
 
-$usps_rates = $usps->get_rates();
+$uspsRates = $usps->getRates();
 ```
 
 Output array sorted by cost: (in cents)
@@ -171,9 +189,9 @@ array(2) {
     string(11) "Parcel Post"
     protected $cost =>
     int(1001)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(4) "usps"
@@ -186,9 +204,9 @@ array(2) {
     string(13) "Priority Mail"
     protected $cost =>
     int(1220)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(4) "usps"
@@ -206,21 +224,21 @@ $fedex = new Fedex\Rate([
 	'prod'           => FALSE,
 	'key'            => 'XXXX',
 	'password'       => 'XXXX',
-	'account_number' => 'XXXX',
-	'meter_number'   => 'XXXX',
-	'drop_off_type'  => 'BUSINESS_SERVICE_CENTER',
+	'accountNumber' => 'XXXX',
+	'meterNumber'   => 'XXXX',
+	'dropOffType'  => 'BUSINESS_SERVICE_CENTER',
 	'shipment'       => $shipment,
-	'approved_codes'  => [
+	'approvedCodes'  => [
 		'FEDEX_EXPRESS_SAVER',  // 1-3 business days
 		'FEDEX_GROUND',         // 1-5 business days
 		'GROUND_HOME_DELIVERY', // 1-5 business days
 		'FEDEX_2_DAY',          // 2 business days
 		'STANDARD_OVERNIGHT',   // overnight
 	],
-	'request_adapter' => new RateRequest\StubFedex(),
+	'requestAdapter' => new RateRequest\StubFedex(),
 ]);
 
-$fedex_rates = $fedex->get_rates();
+$fedexRates = $fedex->getRates();
 ```
 
 Output array sorted by cost: (in cents)
@@ -235,9 +253,9 @@ array(4) {
     string(20) "Ground Home Delivery"
     protected $cost =>
     int(1600)
-    protected $transit_time =>
+    protected $transitTime =>
     string(10) "THREE_DAYS"
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     NULL
     protected $carrier =>
     string(5) "fedex"
@@ -250,9 +268,9 @@ array(4) {
     string(19) "Fedex Express Saver"
     protected $cost =>
     int(2900)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     class Carbon\Carbon#23 (3) {
       public $date =>
       string(26) "2014-09-30 20:00:00.000000"
@@ -272,9 +290,9 @@ array(4) {
     string(11) "Fedex 2 Day"
     protected $cost =>
     int(4000)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     class Carbon\Carbon#26 (3) {
       public $date =>
       string(26) "2014-09-29 20:00:00.000000"
@@ -294,9 +312,9 @@ array(4) {
     string(18) "Standard Overnight"
     protected $cost =>
     int(7800)
-    protected $transit_time =>
+    protected $transitTime =>
     NULL
-    protected $delivery_ts =>
+    protected $deliveryTime =>
     class Carbon\Carbon#58 (3) {
       public $date =>
       string(26) "2014-09-26 20:00:00.000000"
@@ -310,6 +328,31 @@ array(4) {
   }
 }
 ```
+
+## Unit Tests:
+
+```bash
+    vendor/bin/phpunit
+```
+
+### With Code Coverage:
+
+```bash
+    vendor/bin/phpunit --coverage-text --coverage-html coverage_report
+```
+
+### With Live API Tests:
+
+```bash
+    ./live_phpunit.sh
+```
+
+## Run Coding Standards Test:
+
+```bash
+    vendor/bin/phpcs --standard=PSR2 src/ tests/
+```
+
 
 ### License
 

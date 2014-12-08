@@ -5,49 +5,58 @@ use Exception;
 
 abstract class RateAdapter
 {
-	protected $is_prod = FALSE;
+    protected $isProduction;
 
-	/** @var Shipment */
-	protected $shipment;
-	protected $data;
-	protected $response;
-	protected $rates = [];
+    /** @var Shipment */
+    protected $shipment;
+    protected $data;
+    protected $response;
+    protected $rates;
 
-	protected $rate_request;
+    /** @var  @var RateRequest\Adapter */
+    protected $rateRequest;
 
-	abstract protected function prepare(); // Prepare XML
-	abstract protected function execute(); // Curl Request
-	abstract protected function process(); // Convert to shipping rates array
+    /**
+     * Prepare XML
+     */
+    abstract protected function prepare();
 
-	public function __construct($options = [])
-	{
-		if (isset($options['prod'])) {
-			$this->is_prod = (bool) $options['prod'];
-		}
+    /**
+     * Curl Request
+     */
+    abstract protected function execute();
 
-		if (isset($options['shipment'])) {
-			$this->shipment = $options['shipment'];
-		}
-	}
+    /**
+     * Convert to shipping rates array
+     */
+    abstract protected function process();
 
-	public function set_request_adapter(RateRequest\Adapter $rate_request)
-	{
-		$this->rate_request = $rate_request;
-	}
+    public function __construct($options = [])
+    {
+        $this->rates = [];
 
-	public function get_rates()
-	{
-		$this
-			->prepare()
-			->execute()
-			->process()
-			->sort_by_cost();
+        $this->isProduction = (bool) Arr::get($options, 'prod', false);
+        $this->shipment = Arr::get($options, 'shipment');
+    }
 
-		return array_values($this->rates);
-	}
+    public function setRequestAdapter(RateRequest\Adapter $rateRequest)
+    {
+        $this->rateRequest = $rateRequest;
+    }
 
-	protected function sort_by_cost()
-	{
-		uasort($this->rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
-	}
+    public function getRates()
+    {
+        $this
+            ->prepare()
+            ->execute()
+            ->process()
+            ->sortByCost();
+
+        return array_values($this->rates);
+    }
+
+    protected function sortByCost()
+    {
+        uasort($this->rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
+    }
 }
