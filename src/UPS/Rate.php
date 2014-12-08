@@ -18,11 +18,10 @@ class Rate extends RateAdapter
     private $userId;
     private $password;
     private $shipperNumber;
-
-    public $approvedCodes = [
-        '03',
-        '12',
-    ];
+    /**
+     * Codes of appropriate shipping types. Default value is specified in __construct.
+     */
+    public $approvedCodes;
 
     private $shippingCodes = [
         'US' => [ // United States
@@ -90,7 +89,10 @@ class Rate extends RateAdapter
         $this->userId        = Arr::get($options, 'userId');
         $this->password      = Arr::get($options, 'password');
         $this->shipperNumber = Arr::get($options, 'shipperNumber');
-        $this->approvedCodes = Arr::get($options, 'approvedCodes');
+        $this->approvedCodes = Arr::get($options, 'approvedCodes',[
+            '03',
+            '12',
+        ]);
 
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Post()));
 

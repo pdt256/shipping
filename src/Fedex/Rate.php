@@ -20,15 +20,14 @@ class Rate extends RateAdapter
     private $password;
     private $accountNumber;
     private $meterNumber;
-    private $dropOffType = 'BUSINESS_SERVICE_CENTER';
-
-    public $approvedCodes = [
-        'PRIORITY_OVERNIGHT',
-        'FEDEX_2_DAY',
-        'FEDEX_EXPRESS_SAVER',
-        'FEDEX_GROUND',
-        'GROUND_HOME_DELIVERY',
-    ];
+    /**
+     * Type of Drop off, default value "BUSINESS_SERVICE_CENTER" is defined in __construct if not specified.
+     */
+    private $dropOffType;
+    /**
+     * Codes of appropriate shipping types. Default value is specified in __construct.
+     */
+    public $approvedCodes;
 
     private $shippingCodes = [
         'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'Europe First International Priority',
@@ -62,8 +61,14 @@ class Rate extends RateAdapter
         $this->password      = Arr::get($options, 'password');
         $this->accountNumber = Arr::get($options, 'accountNumber');
         $this->meterNumber   = Arr::get($options, 'meterNumber');
-        $this->approvedCodes = Arr::get($options, 'approvedCodes');
-        $this->dropOffType   = Arr::get($options, 'dropOffType');
+        $this->approvedCodes = Arr::get($options, 'approvedCodes', [
+            'PRIORITY_OVERNIGHT',
+            'FEDEX_2_DAY',
+            'FEDEX_EXPRESS_SAVER',
+            'FEDEX_GROUND',
+            'GROUND_HOME_DELIVERY',
+        ]);
+        $this->dropOffType   = Arr::get($options, 'dropOffType', 'BUSINESS_SERVICE_CENTER');
 
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Post()));
     }
