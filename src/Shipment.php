@@ -5,15 +5,16 @@ class Shipment
     /** @var Package[] */
     protected $packages = [];
 
-    protected $from_postal_code;
-    protected $from_country_code;
-    protected $to_postal_code;
-    protected $to_country_code;
     /** @var bool */
-    protected $to_is_residential;
+    protected $fromIsResidential;
+    protected $fromPostalCode;
+    protected $fromCountryCode;
+    protected $fromStateProvince;
+
     /** @var bool */
-    protected $from_is_residential;
-    protected $from_state_province;
+    protected $toIsResidential;
+    protected $toPostalCode;
+    protected $toCountryCode;
 
     /**
      * @param Package $package
@@ -46,16 +47,16 @@ class Shipment
      */
     public function getFromPostalCode()
     {
-        return $this->from_postal_code;
+        return $this->fromPostalCode;
     }
 
     /**
-     * @param mixed $from_postal_code
+     * @param mixed $fromPostalCode
      * @return $this
      */
-    public function setFromPostalCode($from_postal_code)
+    public function setFromPostalCode($fromPostalCode)
     {
-        $this->from_postal_code = $from_postal_code;
+        $this->fromPostalCode = $fromPostalCode;
         return $this;
     }
 
@@ -64,16 +65,16 @@ class Shipment
      */
     public function getFromCountryCode()
     {
-        return $this->from_country_code;
+        return $this->fromCountryCode;
     }
 
     /**
-     * @param mixed $from_country_code
+     * @param mixed $fromCountryCode
      * @return $this
      */
-    public function setFromCountryCode($from_country_code)
+    public function setFromCountryCode($fromCountryCode)
     {
-        $this->from_country_code = $from_country_code;
+        $this->fromCountryCode = $fromCountryCode;
         return $this;
     }
 
@@ -82,16 +83,16 @@ class Shipment
      */
     public function getToPostalCode()
     {
-        return $this->to_postal_code;
+        return $this->toPostalCode;
     }
 
     /**
-     * @param mixed $to_postal_code
+     * @param mixed $toPostalCode
      * @return $this
      */
-    public function setToPostalCode($to_postal_code)
+    public function setToPostalCode($toPostalCode)
     {
-        $this->to_postal_code = $to_postal_code;
+        $this->toPostalCode = $toPostalCode;
         return $this;
     }
 
@@ -100,52 +101,52 @@ class Shipment
      */
     public function getToCountryCode()
     {
-        return $this->to_country_code;
+        return $this->toCountryCode;
     }
 
     /**
-     * @param mixed $to_country_code
+     * @param mixed $toCountryCode
      * @return $this
      */
-    public function setToCountryCode($to_country_code)
+    public function setToCountryCode($toCountryCode)
     {
-        $this->to_country_code = $to_country_code;
+        $this->toCountryCode = $toCountryCode;
         return $this;
     }
 
     /**
      * @return boolean
      */
-    public function isToResidential()
+    public function getToIsResidential()
     {
-        return $this->to_is_residential;
+        return $this->toIsResidential;
     }
 
     /**
-     * @param boolean $to_is_residential
+     * @param boolean $toIsResidential
      * @return $this
      */
-    public function setToResidential($to_is_residential)
+    public function setToIsResidential($toIsResidential)
     {
-        $this->to_is_residential = $to_is_residential;
+        $this->toIsResidential = $toIsResidential;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isFromResidential()
+    public function getFromIsResidential()
     {
-        return $this->from_is_residential;
+        return $this->fromIsResidential;
     }
 
     /**
-     * @param $from_is_residential
+     * @param $fromIsResidential
      * @return $this
      */
-    public function setFromResidential($from_is_residential)
+    public function setFromIsResidential($fromIsResidential)
     {
-        $this->from_is_residential = $from_is_residential;
+        $this->fromIsResidential = $fromIsResidential;
         return $this;
     }
 
@@ -154,16 +155,16 @@ class Shipment
      */
     public function getFromStateProvinceCode()
     {
-        return $this->from_state_province;
+        return $this->fromStateProvince;
     }
 
     /**
-     * @param $from_state_province
+     * @param $fromStateProvince
      * @return $this
      */
-    public function setFromStateProvinceCode($from_state_province)
+    public function setFromStateProvinceCode($fromStateProvince)
     {
-        $this->from_state_province = $from_state_province;
+        $this->fromStateProvince = $fromStateProvince;
         return $this;
     }
 }

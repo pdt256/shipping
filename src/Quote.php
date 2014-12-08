@@ -7,9 +7,17 @@ class Quote
     protected $code;
     protected $name;
     protected $cost;
-    protected $transit_time;
-    protected $delivery_ts;
+    protected $transitTime;
+    protected $deliveryEstimate;
     protected $carrier;
+
+    public function __construct($carrier = null, $code = null, $name = null, $cost = null)
+    {
+        $this->setCarrier($carrier);
+        $this->setCode($code);
+        $this->setName($name);
+        $this->setCost($cost);
+    }
 
     /**
      * @return mixed
@@ -25,7 +33,7 @@ class Quote
      */
     public function setCarrier($carrier)
     {
-        $this->carrier = $carrier;
+        $this->carrier = (string) $carrier;
         return $this;
     }
 
@@ -43,7 +51,7 @@ class Quote
      */
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = (string) $code;
         return $this;
     }
 
@@ -61,7 +69,7 @@ class Quote
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = (string) $name;
         return $this;
     }
 
@@ -81,7 +89,7 @@ class Quote
      */
     public function setCost($cost)
     {
-        $this->cost = $cost;
+        $this->cost = (int) $cost;
         return $this;
     }
 
@@ -90,16 +98,16 @@ class Quote
      */
     public function getTransitTime()
     {
-        return $this->transit_time;
+        return $this->transitTime;
     }
 
     /**
-     * @param mixed $transit_time
+     * @param mixed $transitTime
      * @return $this
      */
-    public function setTransitTime($transit_time)
+    public function setTransitTime($transitTime)
     {
-        $this->transit_time = $transit_time;
+        $this->transitTime = $transitTime;
         return $this;
     }
 
@@ -108,16 +116,16 @@ class Quote
      */
     public function getDeliveryEstimate()
     {
-        return $this->delivery_ts;
+        return $this->deliveryEstimate;
     }
 
     /**
-     * @param DateTime $estimate
+     * @param DateTime $deliveryEstimate
      * @return $this
      */
-    public function setDeliveryEstimate(DateTime $estimate)
+    public function setDeliveryEstimate(DateTime $deliveryEstimate)
     {
-        $this->delivery_ts = $estimate;
+        $this->deliveryEstimate = $deliveryEstimate;
         return $this;
     }
 }

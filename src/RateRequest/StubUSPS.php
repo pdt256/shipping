@@ -3,22 +3,19 @@ namespace pdt256\Shipping\RateRequest;
 
 class StubUSPS extends Adapter
 {
-	private $artificial_delay = 0;
+    private $artificialDelay = 0;
 
-	public function __construct($artificial_delay = 0)
-	{
-		$this->artificial_delay = $artificial_delay;
-	}
+    public function __construct($artificial_delay = 0)
+    {
+        $this->artificialDelay = $artificial_delay;
+    }
 
-	public function execute($url, $data = NULL)
-	{
-		if ($this->artificial_delay > 0) {
-			sleep($this->artificial_delay);
-		}
+    public function execute($url, $data = null)
+    {
+        if ($this->artificialDelay > 0) {
+            sleep($this->artificialDelay);
+        }
 
-		$response = '<?xml version="1.0" encoding="UTF-8"?>
-<RateV4Response><Package ID="1"><ZipOrigination>90401</ZipOrigination><ZipDestination>76667</ZipDestination><Pounds>3</Pounds><Ounces>0</Ounces><Size>LARGE</Size><Machinable>FALSE</Machinable><Zone>6</Zone><Postage CLASSID="3"><MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService><Rate>42.25</Rate></Postage><Postage CLASSID="2"><MailService>Priority Mail Express 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Hold For Pickup</MailService><Rate>42.25</Rate></Postage><Postage CLASSID="1"><MailService>Priority Mail 2-Day&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</MailService><Rate>12.20</Rate></Postage><Postage CLASSID="4"><MailService>Standard Post&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;</MailService><Rate>10.01</Rate></Postage><Postage CLASSID="6"><MailService>Media Mail Parcel</MailService><Rate>3.65</Rate></Postage><Postage CLASSID="7"><MailService>Library Mail Parcel</MailService><Rate>3.48</Rate></Postage></Package></RateV4Response>';
-
-		return $response;
-	}
+        return file_get_contents(__DIR__ . '/USPSResponse.xml');
+    }
 }
