@@ -3,6 +3,7 @@ namespace pdt256\Shipping\UPS;
 
 use pdt256\Ship;
 use pdt256\Shipping\Arr;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
 use DOMDocument;
@@ -114,18 +115,30 @@ class Rate extends RateAdapter
 
 	protected function prepare()
 	{
-		$to = Arr::get($this->shipment, 'to');
-		$shipper = Arr::get($this->shipment, 'from');
-		$dimensions = Arr::get($this->shipment, 'dimensions');
-
-		$pounds = (int) Arr::get($this->shipment, 'weight');
-		$ounces = 0;
-
-		if ($pounds < 1) {
-			throw new Exception('Weight missing');
-		}
-
 		$service_code = '03';
+
+		$packages = '';
+		foreach ($this->shipment->getPackages() as $p) {
+			$packages .= '<Package>
+						<PackagingType>
+							<Code>02</Code>
+						</PackagingType>
+						<Dimensions>
+							<UnitOfMeasurement>
+								<Code>IN</Code>
+							</UnitOfMeasurement>
+							<Length>' . $p->getLength() . '</Length>
+							<Width>' . $p->getWidth() . '</Width>
+							<Height>' . $p->getHeight() . '</Height>
+						</Dimensions>
+						<PackageWeight>
+							<UnitOfMeasurement>
+								<Code>LBS</Code>
+							</UnitOfMeasurement>
+							<Weight>' . $p->getWeight() . '</Weight>
+						</PackageWeight>
+					</Package>';
+		}
 
 		$this->data =
 '<?xml version="1.0"?>
@@ -142,48 +155,34 @@ class Rate extends RateAdapter
 	<Shipment>
 		<Shipper>
 			<Address>
-				<PostalCode>' . Arr::get($shipper, 'postal_code') . '</PostalCode>
-				<CountryCode>' . Arr::get($shipper, 'country_code') . '</CountryCode>
-				' . ((Arr::get($shipper, 'is_residential')) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
+				<PostalCode>' . $this->shipment->getFromPostalCode() . '</PostalCode>
+				<CountryCode>' . $this->shipment->getFromCountryCode() . '</CountryCode>
+				' . (($this->shipment->isFromResidential()) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
 			</Address>
 			<ShipperNumber>' . $this->shipper_number . '</ShipperNumber>
 		</Shipper>
 		<ShipTo>
 			<Address>
-				<PostalCode>' . Arr::get($to, 'postal_code') . '</PostalCode>
-				<CountryCode>' . Arr::get($to, 'country_code') . '</CountryCode>
-				' . ((Arr::get($to, 'is_residential')) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
+				<PostalCode>' . $this->shipment->getToPostalCode() . '</PostalCode>
+				<CountryCode>' . $this->shipment->getToCountryCode() . '</CountryCode>
+				' . (($this->shipment->isToResidential()) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
 			</Address>
 		</ShipTo>
 		<ShipFrom>
 			<Address>
-				<PostalCode>' . Arr::get($shipper, 'postal_code') . '</PostalCode>
-				<CountryCode>' . Arr::get($shipper, 'country_code') . '</CountryCode>
-				' . ((Arr::get($shipper, 'is_residential')) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
+				<StateProvinceCode>' . $this->shipment->getFromStateProvinceCode() . '</StateProvinceCode>
+				<PostalCode>' . $this->shipment->getFromPostalCode() . '</PostalCode>
+				<CountryCode>' . $this->shipment->getFromCountryCode() . '</CountryCode>
+				' . (($this->shipment->isFromResidential()) ? '<ResidentialAddressIndicator>1</ResidentialAddressIndicator>' : '') . '
 			</Address>
 		</ShipFrom>
 		<Service>
 			<Code>' . $service_code . '</Code>
 		</Service>
-		<Package>
-			<PackagingType>
-				<Code>02</Code>
-			</PackagingType>
-			<Dimensions>
-				<UnitOfMeasurement>
-					<Code>IN</Code>
-				</UnitOfMeasurement>
-				<Length>' . Arr::get($dimensions, 'length') . '</Length>
-				<Width>' . Arr::get($dimensions, 'width') . '</Width>
-				<Height>' . Arr::get($dimensions, 'height') . '</Height>
-			</Dimensions>
-			<PackageWeight>
-				<UnitOfMeasurement>
-					<Code>LBS</Code>
-				</UnitOfMeasurement>
-				<Weight>' . $pounds . '</Weight>
-			</PackageWeight>
-		</Package>
+		' . $packages . '
+		<RateInformation>
+			<NegotiatedRatesIndicator/>
+		</RateInformation>
 	</Shipment>
 </RatingServiceSelectionRequest>';
 
@@ -235,11 +234,13 @@ class Rate extends RateAdapter
 				continue;
 			}
 
-			$this->rates[] = array(
-				'code' => $code,
-				'name' => $name,
-				'cost' => (int) ($cost * 100),
-			);
+			$quote = new Quote;
+			$quote
+				->setCarrier('ups')
+				->setCode($code)
+				->setName($name)
+				->setCost((int) $cost * 100);
+			$this->rates[] = $quote;
 		}
 
 		return $this;
