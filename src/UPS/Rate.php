@@ -89,7 +89,7 @@ class Rate extends RateAdapter
         $this->userId        = Arr::get($options, 'userId');
         $this->password      = Arr::get($options, 'password');
         $this->shipperNumber = Arr::get($options, 'shipperNumber');
-        $this->approvedCodes = Arr::get($options, 'approvedCodes',[
+        $this->approvedCodes = Arr::get($options, 'approvedCodes', [
             '03',
             '12',
         ]);
