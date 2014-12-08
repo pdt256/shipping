@@ -1,6 +1,6 @@
 ## PHP Shipping API
 
-[![Test Coverage](http://img.shields.io/badge/coverage-85%25-green.svg)]
+![Test Coverage](http://img.shields.io/badge/coverage-85%25-green.svg)
 [![Build Status](https://travis-ci.org/pdt256/shipping.svg?branch=master)](https://travis-ci.org/pdt256/shipping)
 [![Downloads](https://img.shields.io/packagist/dt/pdt256/shipping.svg)](https://packagist.org/packages/pdt256/shipping)
 [![License](https://img.shields.io/packagist/l/pdt256/shipping.svg)](https://github.com/pdt256/shipping/blob/master/LICENSE.txt)
