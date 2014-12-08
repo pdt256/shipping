@@ -6,6 +6,7 @@ use pdt256\Shipping\Arr;
 use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
+use pdt256\Shipping\Validator;
 use DOMDocument;
 use Exception;
 
@@ -14,8 +15,8 @@ class Rate extends RateAdapter
     private $urlDev = 'http://production.shippingapis.com/ShippingAPI.dll';
     private $urlProd = 'http://production.shippingapis.com/ShippingAPI.dll';
 
-    private $username = 'XXX';
-    private $password = 'XXX';
+    private $username;
+    private $password;
 
     public $approvedCodes = [
         '1',
@@ -76,7 +77,20 @@ class Rate extends RateAdapter
         $this->approvedCodes = Arr::get($options, 'approvedCodes');
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Get()));
     }
+    protected function validate()
+    {
+        foreach ($this->shipment->getPackages() as $package) {
+            Validator::checkIfNull($package->getWeight(), 'weight');
+            Validator::checkIfNull($package->getLength(), 'length');
+            Validator::checkIfNull($package->getHeight(), 'height');
+        }
+        Validator::checkIfNull($this->username, 'username');
+        Validator::checkIfNull($this->password, 'password');
+        Validator::checkIfNull($this->shipment->getFromPostalCode(), 'fromPostalCode');
+        Validator::checkIfNull($this->shipment->getToPostalCode(), 'toPostalCode');
 
+        return $this;
+    }
     protected function prepare()
     {
         $packages = '';
