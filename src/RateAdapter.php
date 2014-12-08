@@ -17,6 +17,10 @@ abstract class RateAdapter
     protected $rateRequest;
 
     /**
+     * Make sure all necessary fields are set
+     */
+    abstract protected function validate();
+    /**
      * Prepare XML
      */
     abstract protected function prepare();
@@ -47,6 +51,7 @@ abstract class RateAdapter
     public function getRates()
     {
         $this
+            ->validate()
             ->prepare()
             ->execute()
             ->process()

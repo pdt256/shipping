@@ -7,6 +7,7 @@ use pdt256\Shipping\Arr;
 use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
+use pdt256\Shipping\Validator;
 use DOMDocument;
 use Exception;
 
@@ -15,19 +16,18 @@ class Rate extends RateAdapter
     private $urlDev = 'https://gatewaybeta.fedex.com/web-services/';
     private $urlProd = 'https://gateway.fedex.com/web-services/';
 
-    private $key = 'XXX';
-    private $password = 'XXX';
-    private $accountNumber = 'XXX';
-    private $meterNumber = 'XXX';
-    private $dropOffType = 'BUSINESS_SERVICE_CENTER';
-
-    public $approvedCodes = [
-        'PRIORITY_OVERNIGHT',
-        'FEDEX_2_DAY',
-        'FEDEX_EXPRESS_SAVER',
-        'FEDEX_GROUND',
-        'GROUND_HOME_DELIVERY',
-    ];
+    private $key;
+    private $password;
+    private $accountNumber;
+    private $meterNumber;
+    /**
+     * Type of Drop off, default value "BUSINESS_SERVICE_CENTER" is defined in __construct if not specified.
+     */
+    private $dropOffType;
+    /**
+     * Codes of appropriate shipping types. Default value is specified in __construct.
+     */
+    public $approvedCodes;
 
     private $shippingCodes = [
         'EUROPE_FIRST_INTERNATIONAL_PRIORITY' => 'Europe First International Priority',
@@ -61,12 +61,37 @@ class Rate extends RateAdapter
         $this->password      = Arr::get($options, 'password');
         $this->accountNumber = Arr::get($options, 'accountNumber');
         $this->meterNumber   = Arr::get($options, 'meterNumber');
-        $this->approvedCodes = Arr::get($options, 'approvedCodes');
-        $this->dropOffType   = Arr::get($options, 'dropOffType');
+        $this->approvedCodes = Arr::get($options, 'approvedCodes', [
+            'PRIORITY_OVERNIGHT',
+            'FEDEX_2_DAY',
+            'FEDEX_EXPRESS_SAVER',
+            'FEDEX_GROUND',
+            'GROUND_HOME_DELIVERY',
+        ]);
+        $this->dropOffType   = Arr::get($options, 'dropOffType', 'BUSINESS_SERVICE_CENTER');
 
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Post()));
     }
+    protected function validate()
+    {
+        foreach ($this->shipment->getPackages() as $package) {
+            Validator::checkIfNull($package->getWeight(), 'weight');
+            Validator::checkIfNull($package->getLength(), 'length');
+            Validator::checkIfNull($package->getHeight(), 'height');
+        }
+        Validator::checkIfNull($this->key, 'key');
+        Validator::checkIfNull($this->password, 'password');
+        Validator::checkIfNull($this->accountNumber, 'accountNumber');
+        Validator::checkIfNull($this->meterNumber, 'meterNumber');
+        Validator::checkIfNull($this->shipment->getFromPostalCode(), 'fromPostalCode');
+        Validator::checkIfNull($this->shipment->getFromCountryCode(), 'fromCountryCode');
+        Validator::checkIfNull($this->shipment->getFromIsResidential(), 'fromIsResidential');
+        Validator::checkIfNull($this->shipment->getToPostalCode(), 'toPostalCode');
+        Validator::checkIfNull($this->shipment->getToCountryCode(), 'toCountryCode');
+        Validator::checkIfNull($this->shipment->getToIsResidential(), 'toIsResidential');
 
+        return $this;
+    }
     protected function prepare()
     {
         $date = time();
@@ -103,7 +128,6 @@ class Rate extends RateAdapter
                     '</Dimensions>' .
                 '</RequestedPackageLineItems>';
         }
-
         $this->data = '<?xml version="1.0"?>' .
             '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" ' .
                 'xmlns="http://fedex.com/ws/rate/v13">' .

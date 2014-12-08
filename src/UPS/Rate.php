@@ -1,11 +1,11 @@
 <?php
 namespace pdt256\Shipping\UPS;
 
-use pdt256\Ship;
 use pdt256\Shipping\Arr;
 use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
+use pdt256\Shipping\Validator;
 use DOMDocument;
 use Exception;
 
@@ -14,15 +14,14 @@ class Rate extends RateAdapter
     private $urlDev = 'https://wwwcie.ups.com/ups.app/xml/Rate';
     private $urlProd = 'https://www.ups.com/ups.app/xml/Rate';
 
-    private $accessKey = 'XXX';
-    private $userId = 'XXX';
-    private $password = 'XXX';
-    private $shipperNumber = 'XXX';
-
-    public $approvedCodes = [
-        '03',
-        '12',
-    ];
+    private $accessKey;
+    private $userId;
+    private $password;
+    private $shipperNumber;
+    /**
+     * Codes of appropriate shipping types. Default value is specified in __construct.
+     */
+    public $approvedCodes;
 
     private $shippingCodes = [
         'US' => [ // United States
@@ -90,12 +89,34 @@ class Rate extends RateAdapter
         $this->userId        = Arr::get($options, 'userId');
         $this->password      = Arr::get($options, 'password');
         $this->shipperNumber = Arr::get($options, 'shipperNumber');
-        $this->approvedCodes = Arr::get($options, 'approvedCodes');
+        $this->approvedCodes = Arr::get($options, 'approvedCodes', [
+            '03',
+            '12',
+        ]);
 
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Post()));
 
     }
+    protected function validate()
+    {
+        foreach ($this->shipment->getPackages() as $package) {
+            Validator::checkIfNull($package->getWeight(), 'weight');
+            Validator::checkIfNull($package->getLength(), 'length');
+            Validator::checkIfNull($package->getHeight(), 'height');
+        }
+        Validator::checkIfNull($this->accessKey, 'accessKey');
+        Validator::checkIfNull($this->userId, 'userId');
+        Validator::checkIfNull($this->password, 'password');
+        Validator::checkIfNull($this->shipperNumber, 'shipperNumber');
+        Validator::checkIfNull($this->shipment->getFromPostalCode(), 'fromPostalCode');
+        Validator::checkIfNull($this->shipment->getFromCountryCode(), 'fromCountryCode');
+        Validator::checkIfNull($this->shipment->getFromIsResidential(), 'fromIsResidential');
+        Validator::checkIfNull($this->shipment->getToPostalCode(), 'toPostalCode');
+        Validator::checkIfNull($this->shipment->getToCountryCode(), 'toCountryCode');
+        Validator::checkIfNull($this->shipment->getToIsResidential(), 'toIsResidential');
 
+        return $this;
+    }
     protected function prepare()
     {
         $service_code = '03';

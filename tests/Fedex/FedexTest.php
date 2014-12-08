@@ -49,6 +49,7 @@ class RateTest extends \PHPUnit_Framework_TestCase
         $this->shipment->setFromStateProvinceCode('CA')
             ->setFromPostalCode('90401')
             ->setFromCountryCode('US')
+            ->setFromIsResidential(true)
             ->setToPostalCode('78703')
             ->setToCountryCode('US')
             ->setToIsResidential(true)
@@ -59,12 +60,15 @@ class RateTest extends \PHPUnit_Framework_TestCase
     {
         $rateAdapter = new Rate([
             'prod' => false,
-            'drop_off_type' => 'BUSINESS_SERVICE_CENTER',
+            'key' => 'XXX',
+            'password' => 'XXX',
+            'accountNumber' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
             'shipment' => $this->shipment,
             'approvedCodes' => $this->approvedCodes,
             'requestAdapter' => new StubFedex,
         ]);
-
         $rates = $rateAdapter->getRates();
 
         $ground = new Quote('fedex', 'GROUND_HOME_DELIVERY', 'Ground Home Delivery', 1655);

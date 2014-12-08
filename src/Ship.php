@@ -58,7 +58,6 @@ class Ship
 
         // Build approvedCodes
         foreach ($this->shipping_options as $shipping_group => $row) {
-
             foreach ($row as $_carrier => $row2) {
                 if (!isset($approvedCodes[$_carrier])) {
                     $approvedCodes[$_carrier] = [];
@@ -89,9 +88,7 @@ class Ship
                 $group_codes = array_keys($row2);
 
                 if (! empty($rates[$carrier])) {
-
                     foreach ($rates[$carrier] as $row3) {
-
                         if (in_array($row3->getCode(), $group_codes)) {
                             $row3->setCarrier($carrier);
 
@@ -127,9 +124,7 @@ class Ship
                 $group_codes = array_keys($row2);
 
                 if (!empty($rates[$carrier])) {
-
                     foreach ($rates[$carrier] as $row3) {
-
                         if (in_array($row3->getCode(), $group_codes)) {
                             $row3->setCarrier($carrier);
                             $display_rates[$shipping_group][] = $row3;

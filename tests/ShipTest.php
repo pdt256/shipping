@@ -49,6 +49,7 @@ class ShipTest extends \PHPUnit_Framework_TestCase
         $s->setFromStateProvinceCode('CA')
             ->setFromPostalCode('90401')
             ->setFromCountryCode('US')
+            ->setFromIsResidential(true)
             ->setToPostalCode('78703')
             ->setToCountryCode('US')
             ->setToIsResidential(true);
@@ -105,9 +106,9 @@ class ShipTest extends \PHPUnit_Framework_TestCase
             'prod' => false,
             'key' => 'XXXX',
             'password' => 'XXXX',
-            'account_number' => 'XXXX',
-            'meter_number' => 'XXXX',
-            'drop_off_type' => 'BUSINESS_SERVICE_CENTER',
+            'accountNumber' => 'XXXX',
+            'meterNumber' => 'XXXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
             'shipment' => $this->shipment,
             'approvedCodes' => $approvedCodes,
             'requestAdapter' => new RateRequest\StubFedex(),

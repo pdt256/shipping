@@ -48,6 +48,7 @@ class RateTest extends \PHPUnit_Framework_TestCase
         $this->shipment->setFromStateProvinceCode('CA')
             ->setFromPostalCode('90401')
             ->setFromCountryCode('US')
+            ->setFromIsResidential(true)
             ->setToPostalCode('78703')
             ->setToCountryCode('US')
             ->setToIsResidential(true)
@@ -57,6 +58,10 @@ class RateTest extends \PHPUnit_Framework_TestCase
     public function testMockRates()
     {
         $rateAdapter = new Rate([
+            'accessKey' => 'XXX',
+            'userId' => 'XXX',
+            'password' => 'XXX',
+            'shipperNumber' => 'XXX',
             'prod' => false,
             'shipment' => $this->shipment,
             'approvedCodes' => $this->approvedCodes,
