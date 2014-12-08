@@ -88,13 +88,13 @@ class Ship
 
 					foreach ($rates[$carrier] as $row3) {
 
-						if (in_array($row3['code'], $group_codes)) {
-							$row3['carrier'] = $carrier;
+						if (in_array($row3->getCode(), $group_codes)) {
+							$row3->setCarrier($carrier);
 
 							if ($cheapest_row === NULL) {
 								$cheapest_row = $row3;
 							} else {
-								if ($row3['cost'] < $cheapest_row['cost']) {
+								if ($row3->getCost() < $cheapest_row->getCost()) {
 									$cheapest_row = $row3;
 								}
 							}
@@ -126,8 +126,8 @@ class Ship
 
 					foreach ($rates[$carrier] as $row3) {
 
-						if (in_array($row3['code'], $group_codes)) {
-							$row3['carrier'] = $carrier;
+						if (in_array($row3->getCode(), $group_codes)) {
+							$row3->setCarrier($carrier);
 							$display_rates[$shipping_group][] = $row3;
 						}
 					}
@@ -142,6 +142,6 @@ class Ship
 
 	protected function sort_by_cost( & $rates)
 	{
-		uasort($rates, create_function('$a, $b', 'return ($a["cost"] > $b["cost"]);'));
+		uasort($rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
 	}
 }

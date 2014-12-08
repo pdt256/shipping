@@ -3,6 +3,7 @@ namespace pdt256\Shipping\USPS;
 
 use pdt256\Shipping;
 use pdt256\Shipping\Arr;
+use pdt256\Shipping\Quote;
 use pdt256\Shipping\RateAdapter;
 use pdt256\Shipping\RateRequest;
 use DOMDocument;
@@ -78,6 +79,10 @@ class Rate extends RateAdapter
 			$this->password = $options['password'];
 		}
 
+		if (isset($options['username'])) {
+			$this->username = $options['username'];
+		}
+
 		if (isset($options['approved_codes'])) {
 			$this->approved_codes = $options['approved_codes'];
 		}
@@ -91,50 +96,54 @@ class Rate extends RateAdapter
 
 	protected function prepare()
 	{
-		$to = Arr::get($this->shipment, 'to');
-		$shipper = Arr::get($this->shipment, 'from');
-		$dimensions = Arr::get($this->shipment, 'dimensions');
 
-		// https://www.usps.com/business/web-tools-apis/rate-calculators-v1-7a.htm
-		$pounds = (int) Arr::get($this->shipment, 'weight');
-		$ounces = 0;
+		$packages = '';
+		$sequence_number = 0;
+		foreach ($this->shipment->getPackages() as $p) {
+			$sequence_number++;
 
-		if ($pounds < 1) {
-			throw new Exception('Weight missing');
-		}
+			/**
+			 * RateV4Request / Package / Size
+			 required once
+			 Defined as follows:
 
-		$size = Arr::get($this->shipment, 'size');
+			 REGULAR: Package dimensions are 12’’ or less;
+			 LARGE: Any package dimension is larger than 12’’.
 
-		// If user has not specified size, determine it automatically
-		// https://www.usps.com/business/web-tools-apis/rate-calculator-api.htm#_Toc378922331
-		if ($size === null) {
-			// Size is considered large if any dimension is larger than 12 inches
-			foreach ($dimensions as $dimension) {
-				if ($dimension > 12) {
-					$size = 'LARGE';
-					break;
-				}
-			}
-			if (!isset($size)) {
+			 For example: <Size>REGULAR</Size>
+			 string
+			 whiteSpace=collapse
+			 enumeration=LARGE
+			 enumeration=REGULAR
+
+			 */
+			if ($p->getWidth() > 12 or $p->getLength() > 12 or $p->getHeight() > 12) {
+				$size = 'LARGE';
+				$container = 'RECTANGULAR';
+			} else {
 				$size = 'REGULAR';
+				$container = 'VARIABLE';
 			}
+
+			$packages .= '<Package ID="' . $sequence_number .'">
+					<Service>ALL</Service>
+					<ZipOrigination>' . $this->shipment->getFromPostalCode() . '</ZipOrigination>
+					<ZipDestination>' . $this->shipment->getToPostalCode() . '</ZipDestination>
+					<Pounds>' . $p->getWeight() . '</Pounds>
+					<Ounces>0</Ounces>
+					<Container>' . $container . '</Container>
+					<Size>' . $size . '</Size>
+					<Width>' . $p->getWidth() . '</Width>
+					<Length>' . $p->getLength() . '</Length>
+					<Height>' . $p->getHeight() . '</Height>
+					<Machinable>' . 'False' . '</Machinable>
+				</Package>';
 		}
+
 		$this->data =
 '<RateV4Request USERID="' . $this->username . '">
 	<Revision/>
-	<Package ID="1">
-		<Service>ALL</Service>
-		<ZipOrigination>' . Arr::get($shipper, 'postal_code') . '</ZipOrigination>
-		<ZipDestination>' . Arr::get($to, 'postal_code') . '</ZipDestination>
-		<Pounds>' . $pounds . '</Pounds>
-		<Ounces>' . $ounces . '</Ounces>
-		<Container>' . Arr::get($this->shipment, 'container') . '</Container>
-		<Size>' . $size . '</Size>
-		<Width>' . Arr::get($dimensions, 'width') . '</Width>
-		<Length>' . Arr::get($dimensions, 'length') . '</Length>
-		<Height>' . Arr::get($dimensions, 'height') . '</Height>
-		<Machinable>' . 'False' . '</Machinable>
-	</Package>
+	' . $packages . '
 </RateV4Request>';
 
 		return $this;
@@ -172,6 +181,9 @@ class Rate extends RateAdapter
 			throw $e;
 		}
 
+		/** @var Quote[] $rates */
+		$rates = [];
+
 		foreach ($postage_list as $postage) {
 			$code = @$postage->getAttribute('CLASSID');
 			$cost = @$postage->getElementsByTagName('Rate')->item(0)->nodeValue;
@@ -182,12 +194,23 @@ class Rate extends RateAdapter
 				continue;
 			}
 
-			$this->rates[] = array(
-				'code' => $code,
-				'name' => $name,
-				'cost' => (int) ($cost * 100),
-			);
+			if (array_key_exists($code, $rates)) {
+				$cost = $rates[$code]->getCost() + ($cost * 100);
+			} else {
+				$cost = $cost * 100;
+			}
+
+			$quote = new Quote;
+			$quote
+				->setCarrier('usps')
+				->setCode($code)
+				->setName($name)
+				->setCost((int) $cost);
+
+			$rates[$quote->getCode()] = $quote;
 		}
+
+		$this->rates = array_values($rates);
 
 		return $this;
 	}
