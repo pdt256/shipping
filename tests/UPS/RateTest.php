@@ -101,4 +101,55 @@ class RateTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(count($rates) > 0);
         $this->assertTrue($rates[0] instanceof Quote);
     }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingAccessKey()
+    {
+        $rateAdapter = new Rate([
+            'userId' => 'XXX',
+            'password' => 'XXX',
+            'shipperNumber' => 'XXX',
+            'prod' => false,
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubUPS,
+        ]);
+
+        $rateAdapter->getRates();
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingPassword()
+    {
+        $rateAdapter = new Rate([
+            'accessKey' => 'XXX',
+            'userId' => 'XXX',
+            'shipperNumber' => 'XXX',
+            'prod' => false,
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubUPS,
+        ]);
+
+        $rateAdapter->getRates();
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingShipperNumber()
+    {
+        $rateAdapter = new Rate([
+            'accessKey' => 'XXX',
+            'userId' => 'XXX',
+            'password' => 'XXX',
+            'prod' => false,
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubUPS,
+        ]);
+
+        $rateAdapter->getRates();
+    }
 }
