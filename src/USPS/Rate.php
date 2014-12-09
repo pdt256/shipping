@@ -81,11 +81,7 @@ class Rate extends RateAdapter
     }
     protected function validate()
     {
-        foreach ($this->shipment->getPackages() as $package) {
-            Validator::checkIfNull($package->getWeight(), 'weight');
-            Validator::checkIfNull($package->getLength(), 'length');
-            Validator::checkIfNull($package->getHeight(), 'height');
-        }
+        $this->validatePackages();
         Validator::checkIfNull($this->username, 'username');
         Validator::checkIfNull($this->password, 'password');
         Validator::checkIfNull($this->shipment->getFromPostalCode(), 'fromPostalCode');
