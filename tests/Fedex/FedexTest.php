@@ -111,4 +111,77 @@ class RateTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(count($rates) > 0);
         $this->assertTrue($rates[0] instanceof Quote);
     }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingKey()
+    {
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'password' => 'XXX',
+            'accountNumber' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubFedex,
+        ]);
+
+        $rateAdapter->getRates();
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingPassword()
+    {
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'key' => 'XXX',
+            'accountNumber' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubFedex,
+        ]);
+
+        $rateAdapter->getRates();
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingAccountNumber()
+    {
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'key' => 'XXX',
+            'password' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubFedex,
+        ]);
+
+        $rateAdapter->getRates();
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testMissingMeterNumber()
+    {
+
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'key' => 'XXX',
+            'password' => 'XXX',
+            'accountNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubFedex,
+        ]);
+        $rateAdapter->getRates();
+
+    }
 }

@@ -35,6 +35,19 @@ abstract class RateAdapter
      */
     abstract protected function process();
 
+    /**
+     * @throws \LogicException
+     * To be called from validate() when packages have to have 3 dimensions and weight
+     */
+    protected function validatePackages()
+    {
+        foreach ($this->shipment->getPackages() as $package) {
+            Validator::checkIfNull($package->getWeight(), 'weight');
+            Validator::checkIfNull($package->getLength(), 'length');
+            Validator::checkIfNull($package->getHeight(), 'height');
+            Validator::checkIfNull($package->getWidth(), 'width');
+        }
+    }
     public function __construct($options = [])
     {
         $this->rates = [];
@@ -46,6 +59,26 @@ abstract class RateAdapter
     public function setRequestAdapter(RateRequest\Adapter $rateRequest)
     {
         $this->rateRequest = $rateRequest;
+    }
+
+    public function setShipment($shipment)
+    {
+        $this->shipment = $shipment;
+    }
+
+    public function getShipment()
+    {
+        return $this->shipment;
+    }
+
+    public function setIsProduction($isProduction)
+    {
+        $this->isProduction = $isProduction;
+    }
+
+    public function getIsProduction()
+    {
+        return $this->isProduction;
     }
 
     public function getRates()
