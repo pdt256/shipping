@@ -16,7 +16,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         Validator::checkIfNull('XXX', 'notNullValue');
         Validator::checkIfNull([], 'notNullValue');
         Validator::checkIfNull(new \stdClass(), 'notNullValue');
-        Validator::checkIfNull(function() {
+        Validator::checkIfNull(function () {
         }, 'notNullValue');
     }
 }
