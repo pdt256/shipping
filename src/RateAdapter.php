@@ -48,6 +48,26 @@ abstract class RateAdapter
         $this->rateRequest = $rateRequest;
     }
 
+    public function setShipment($shipment)
+    {
+        $this->shipment = $shipment;
+    }
+
+    public function getShipment()
+    {
+        return $this->shipment;
+    }
+
+    public function setIsProduction($isProduction)
+    {
+        $this->isProduction = $isProduction;
+    }
+
+    public function getIsProduction()
+    {
+        return $this->isProduction;
+    }
+
     public function getRates()
     {
         $this
