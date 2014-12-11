@@ -1,6 +1,6 @@
 ## PHP Shipping API
 
-![Test Coverage](http://img.shields.io/badge/coverage-85%25-green.svg)
+![Test Coverage](http://img.shields.io/badge/coverage-86%25-green.svg)
 [![Build Status](https://travis-ci.org/pdt256/shipping.svg?branch=master)](https://travis-ci.org/pdt256/shipping)
 [![Downloads](https://img.shields.io/packagist/dt/pdt256/shipping.svg)](https://packagist.org/packages/pdt256/shipping)
 [![License](https://img.shields.io/packagist/l/pdt256/shipping.svg)](https://github.com/pdt256/shipping/blob/master/LICENSE.txt)
@@ -40,9 +40,9 @@ $shipment
     ->setFromStateProvinceCode('IN')
     ->setFromPostalCode('46205')
     ->setFromCountryCode('US')
-    ->setToIsResidential(true);
+    ->setToIsResidential(true)
     ->setToPostalCode('20101')
-    ->setToCountryCode('US')
+    ->setToCountryCode('US');
 
 $package = new Package;
 $package
@@ -70,7 +70,7 @@ use pdt256\Shipping\UPS;
 use pdt256\Shipping\RateRequest;
 
 $ups = new UPS\Rate([
-    'prod'           => FALSE,
+    'prod'           => false,
     'accessKey'      => 'XXXX',
     'userId'         => 'XXXX',
     'password'       => 'XXXX',
@@ -86,74 +86,50 @@ $ups = new UPS\Rate([
     'requestAdapter' => new RateRequest\StubUPS(),
 ]);
 
-$upsRates = $ups->getRates();
+$rates = $ups->getRates();
 ```
 
 Output array sorted by cost: (in cents)
 
 ```php
-array(4) {
-  [0] =>
-  class pdt256\Shipping\Quote#56 (6) {
-    protected $code =>
-    string(2) "03"
-    protected $name =>
-    string(10) "UPS Ground"
-    protected $cost =>
-    int(1900)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(3) "ups"
-  }
-  [1] =>
-  class pdt256\Shipping\Quote#58 (6) {
-    protected $code =>
-    string(2) "02"
-    protected $name =>
-    string(15) "UPS 2nd Day Air"
-    protected $cost =>
-    int(4900)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(3) "ups"
-  }
-  [2] =>
-  class pdt256\Shipping\Quote#57 (6) {
-    protected $code =>
-    string(2) "13"
-    protected $name =>
-    string(22) "UPS Next Day Air Saver"
-    protected $cost =>
-    int(8900)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(3) "ups"
-  }
-  [3] =>
-  class pdt256\Shipping\Quote#55 (6) {
-    protected $code =>
-    string(2) "01"
-    protected $name =>
-    string(16) "UPS Next Day Air"
-    protected $cost =>
-    int(9300)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(3) "ups"
-  }
-}
+array (
+  0 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '03',
+     'name' => 'UPS Ground',
+     'cost' => 1910,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'ups',
+  )),
+  1 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '02',
+     'name' => 'UPS 2nd Day Air',
+     'cost' => 4923,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'ups',
+  )),
+  2 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '13',
+     'name' => 'UPS Next Day Air Saver',
+     'cost' => 8954,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'ups',
+  )),
+  3 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '01',
+     'name' => 'UPS Next Day Air',
+     'cost' => 9328,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'ups',
+  )),
+)
 ```
 
 ## USPS (Stub) Example
@@ -163,7 +139,7 @@ use pdt256\Shipping\USPS;
 use pdt256\Shipping\RateRequest;
 
 $usps = new USPS\Rate([
-	'prod'     => FALSE,
+	'prod'     => false,
 	'username' => 'XXXX',
 	'password' => 'XXXX',
 	'shipment' => $shipment,
@@ -174,44 +150,32 @@ $usps = new USPS\Rate([
 	'requestAdapter' => new RateRequest\StubUSPS(),
 ]);
 
-$uspsRates = $usps->getRates();
+$rates = $usps->getRates();
 ```
 
 Output array sorted by cost: (in cents)
 
 ```php
-array(2) {
-  [0] =>
-  class pdt256\Shipping\Quote#30 (6) {
-    protected $code =>
-    string(1) "4"
-    protected $name =>
-    string(11) "Parcel Post"
-    protected $cost =>
-    int(1001)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(4) "usps"
-  }
-  [1] =>
-  class pdt256\Shipping\Quote#26 (6) {
-    protected $code =>
-    string(1) "1"
-    protected $name =>
-    string(13) "Priority Mail"
-    protected $cost =>
-    int(1220)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(4) "usps"
-  }
-}
+array (
+  0 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '4',
+     'name' => 'Parcel Post',
+     'cost' => 1001,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'usps',
+  )),
+  1 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => '1',
+     'name' => 'Priority Mail',
+     'cost' => 1220,
+     'transitTime' => NULL,
+     'deliveryEstimate' => NULL,
+     'carrier' => 'usps',
+  )),
+)
 ```
 
 ## Fedex (Stub) Example
@@ -238,95 +202,65 @@ $fedex = new Fedex\Rate([
 	'requestAdapter' => new RateRequest\StubFedex(),
 ]);
 
-$fedexRates = $fedex->getRates();
+$rates = $fedex->getRates();
 ```
 
 Output array sorted by cost: (in cents)
 
 ```php
-array(4) {
-  [0] =>
-  class pdt256\Shipping\Quote#65 (6) {
-    protected $code =>
-    string(20) "GROUND_HOME_DELIVERY"
-    protected $name =>
-    string(20) "Ground Home Delivery"
-    protected $cost =>
-    int(1600)
-    protected $transitTime =>
-    string(10) "THREE_DAYS"
-    protected $deliveryTime =>
-    NULL
-    protected $carrier =>
-    string(5) "fedex"
-  }
-  [1] =>
-  class pdt256\Shipping\Quote#63 (6) {
-    protected $code =>
-    string(19) "FEDEX_EXPRESS_SAVER"
-    protected $name =>
-    string(19) "Fedex Express Saver"
-    protected $cost =>
-    int(2900)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    class Carbon\Carbon#23 (3) {
-      public $date =>
-      string(26) "2014-09-30 20:00:00.000000"
-      public $timezone_type =>
-      int(3)
-      public $timezone =>
-      string(16) "America/New_York"
-    }
-    protected $carrier =>
-    string(5) "fedex"
-  }
-  [2] =>
-  class pdt256\Shipping\Quote#61 (6) {
-    protected $code =>
-    string(11) "FEDEX_2_DAY"
-    protected $name =>
-    string(11) "Fedex 2 Day"
-    protected $cost =>
-    int(4000)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    class Carbon\Carbon#26 (3) {
-      public $date =>
-      string(26) "2014-09-29 20:00:00.000000"
-      public $timezone_type =>
-      int(3)
-      public $timezone =>
-      string(16) "America/New_York"
-    }
-    protected $carrier =>
-    string(5) "fedex"
-  }
-  [3] =>
-  class pdt256\Shipping\Quote#60 (6) {
-    protected $code =>
-    string(18) "STANDARD_OVERNIGHT"
-    protected $name =>
-    string(18) "Standard Overnight"
-    protected $cost =>
-    int(7800)
-    protected $transitTime =>
-    NULL
-    protected $deliveryTime =>
-    class Carbon\Carbon#58 (3) {
-      public $date =>
-      string(26) "2014-09-26 20:00:00.000000"
-      public $timezone_type =>
-      int(3)
-      public $timezone =>
-      string(16) "America/New_York"
-    }
-    protected $carrier =>
-    string(5) "fedex"
-  }
-}
+array (
+  0 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => 'GROUND_HOME_DELIVERY',
+     'name' => 'Ground Home Delivery',
+     'cost' => 1655,
+     'transitTime' => 'THREE_DAYS',
+     'deliveryEstimate' => NULL,
+     'carrier' => 'fedex',
+  )),
+  1 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => 'FEDEX_EXPRESS_SAVER',
+     'name' => 'Fedex Express Saver',
+     'cost' => 2989,
+     'transitTime' => NULL,
+     'deliveryEstimate' => 
+    DateTime::__set_state(array(
+       'date' => '2014-09-30 20:00:00',
+       'timezone_type' => 3,
+       'timezone' => 'UTC',
+    )),
+     'carrier' => 'fedex',
+  )),
+  2 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => 'FEDEX_2_DAY',
+     'name' => 'Fedex 2 Day',
+     'cost' => 4072,
+     'transitTime' => NULL,
+     'deliveryEstimate' => 
+    DateTime::__set_state(array(
+       'date' => '2014-09-29 20:00:00',
+       'timezone_type' => 3,
+       'timezone' => 'UTC',
+    )),
+     'carrier' => 'fedex',
+  )),
+  3 => 
+  pdt256\Shipping\Quote::__set_state(array(
+     'code' => 'STANDARD_OVERNIGHT',
+     'name' => 'Standard Overnight',
+     'cost' => 7834,
+     'transitTime' => NULL,
+     'deliveryEstimate' => 
+    DateTime::__set_state(array(
+       'date' => '2014-09-26 20:00:00',
+       'timezone_type' => 3,
+       'timezone' => 'UTC',
+    )),
+     'carrier' => 'fedex',
+  )),
+)
 ```
 
 ## Unit Tests:

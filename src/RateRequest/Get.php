@@ -12,7 +12,7 @@ class Get extends Adapter
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
+        //curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->curlConnectTimeoutInMilliseconds);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->curlDownloadTimeoutInSeconds);
         $response = curl_exec($ch);
