@@ -1,7 +1,9 @@
 <?php
 namespace pdt256\Shipping\Fedex;
 
+use pdt256\Shipping\RateRequest\StubFailingFedex;
 use pdt256\Shipping\RateRequest\StubFedex;
+use pdt256\Shipping\RateRequest\StubIncorrectResponseAdapter;
 use pdt256\Shipping\Ship;
 use pdt256\Shipping\Package;
 use pdt256\Shipping\Shipment;
@@ -86,6 +88,51 @@ class RateTest extends \PHPUnit_Framework_TestCase
         $expected = [$ground, $express, $secondDay, $overnight];
 
         $this->assertEquals($expected, $rates);
+    }
+
+    public function testFail()
+    {
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'key' => 'XXX',
+            'password' => 'XXX',
+            'accountNumber' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubFailingFedex(),
+        ]);
+        try {
+            $rateAdapter->getRates();
+            $this->fail('Getting error from fedex should throw an exception');
+        } catch (FedexRequestException $ex) {
+            $this->assertEquals('556', $ex->getCode());
+            $this->assertEquals('There are no valid services available. ', $ex->getMessage());
+            $this->assertEquals('WARNING', $ex->getSeverity());
+
+        }
+    }
+
+    public function testIncorrectResponse()
+    {
+        $rateAdapter = new Rate([
+            'prod' => false,
+            'key' => 'XXX',
+            'password' => 'XXX',
+            'accountNumber' => 'XXX',
+            'meterNumber' => 'XXX',
+            'dropOffType' => 'BUSINESS_SERVICE_CENTER',
+            'shipment' => $this->shipment,
+            'approvedCodes' => $this->approvedCodes,
+            'requestAdapter' => new StubIncorrectResponseAdapter(),
+        ]);
+        try {
+            $rateAdapter->getRates();
+            $this->fail('Getting incorrect response should throw an exception');
+        } catch (FedexRequestException $ex) {
+            $this->assertEquals('Incorrect response received from FedEx: <html/>', $ex->getMessage());
+        }
     }
 
     public function testLiveRates()
