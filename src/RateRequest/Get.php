@@ -16,10 +16,12 @@ class Get extends Adapter
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $this->curlConnectTimeoutInMilliseconds);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->curlDownloadTimeoutInSeconds);
         $response = curl_exec($ch);
-        curl_close($ch);
         if ($response === false) {
-            throw new RequestException(curl_error($ch));
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new RequestException($error);
         }
+        curl_close($ch);
         return $response;
     }
 }
