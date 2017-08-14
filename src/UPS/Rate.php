@@ -179,7 +179,7 @@ class Rate extends RateAdapter
         return $this;
     }
 
-    private function getPackagesXmlString()
+    protected function getPackagesXmlString()
     {
         $packages = '';
         foreach ($this->shipment->getPackages() as $p) {
