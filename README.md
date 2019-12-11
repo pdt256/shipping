@@ -24,7 +24,7 @@ Add the following lines to your ``composer.json`` file.
 ```JSON
 {
     "require": {
-        "pdt256/shipping": "1.0.*@dev"
+        "pdt256/shipping": "1.0.*"
     }
 }
 ```
