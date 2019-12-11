@@ -141,6 +141,6 @@ class Ship
 
     protected function sortByCost(& $rates)
     {
-        uasort($rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
+        uasort($rates, function ($a, $b) { return ($a->getCost() > $b->getCost());});
     }
 }

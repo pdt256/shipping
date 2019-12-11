@@ -95,6 +95,6 @@ abstract class RateAdapter
 
     protected function sortByCost()
     {
-        uasort($this->rates, create_function('$a, $b', 'return ($a->getCost() > $b->getCost());'));
+        uasort($this->rates, function ($a, $b) { return ($a->getCost() > $b->getCost());});
     }
 }
