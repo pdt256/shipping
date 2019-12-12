@@ -108,12 +108,15 @@ class PackageDimensionsValidationTrait extends TestCase
          ->addPackage($package);
         $adapter->setShipment($shipment);
         $adapter->getRates();
+
+        $this->assertEquals($shipment, $adapter->getShipment());
     }
 
     public function testNormalUSPS()
     {
         $this->validatePackage($this->getNormalPackage(), $this->getUSPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -121,6 +124,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoHeightPackage(), $this->getUSPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -128,6 +132,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoLengthPackage(), $this->getUSPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -135,6 +140,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoWidthPackage(), $this->getUSPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -148,6 +154,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNormalPackage(), $this->getUPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -155,6 +162,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoHeightPackage(), $this->getUPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -162,6 +170,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoLengthPackage(), $this->getUPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -169,6 +178,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoWidthPackage(), $this->getUPSAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -182,6 +192,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNormalPackage(), $this->getFedexAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -189,6 +200,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoHeightPackage(), $this->getFedexAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -196,6 +208,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoLengthPackage(), $this->getFedexAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */
@@ -203,6 +216,7 @@ class PackageDimensionsValidationTrait extends TestCase
     {
         $this->validatePackage($this->getNoWidthPackage(), $this->getFedexAdapter());
     }
+
     /**
      * @expectedException \LogicException
      */

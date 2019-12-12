@@ -1,8 +1,6 @@
 <?php
 namespace pdt256\Shipping;
 
-use Exception;
-
 abstract class RateAdapter
 {
     protected $isProduction;
@@ -18,20 +16,25 @@ abstract class RateAdapter
 
     /**
      * Make sure all necessary fields are set
+     * @return self
      */
     abstract protected function validate();
+
     /**
      * Prepare XML
+     * @return self
      */
     abstract protected function prepare();
 
     /**
      * Curl Request
+     * @return self
      */
     abstract protected function execute();
 
     /**
      * Convert to shipping rates array
+     * @return self
      */
     abstract protected function process();
 
@@ -71,17 +74,20 @@ abstract class RateAdapter
         return $this->shipment;
     }
 
-    public function setIsProduction($isProduction)
+    public function setIsProduction($isProduction): void
     {
         $this->isProduction = $isProduction;
     }
 
-    public function getIsProduction()
+    public function getIsProduction(): bool
     {
         return $this->isProduction;
     }
 
-    public function getRates()
+    /**
+     * @return Quote[]
+     */
+    public function getRates(): array
     {
         $this
             ->validate()
@@ -93,9 +99,9 @@ abstract class RateAdapter
         return array_values($this->rates);
     }
 
-    protected function sortByCost()
+    protected function sortByCost(): void
     {
-        uasort($this->rates, function ($a, $b) {
+        uasort($this->rates, static function (Quote $a, Quote $b) {
             return ($a->getCost() > $b->getCost());
         });
     }

@@ -2,6 +2,7 @@
 namespace pdt256\Shipping;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ValidatorTest extends TestCase
 {
@@ -17,8 +18,9 @@ class ValidatorTest extends TestCase
     {
         Validator::checkIfNull('XXX', 'notNullValue');
         Validator::checkIfNull([], 'notNullValue');
-        Validator::checkIfNull(new \stdClass(), 'notNullValue');
+        Validator::checkIfNull(new stdClass(), 'notNullValue');
         Validator::checkIfNull(function () {
         }, 'notNullValue');
+        $this->assertTrue(true);
     }
 }
