@@ -139,8 +139,10 @@ class Ship
         return $display_rates;
     }
 
-    protected function sortByCost(& $rates)
+    protected function sortByCost(&$rates)
     {
-        uasort($rates, function ($a, $b) { return ($a->getCost() > $b->getCost());});
+        uasort($rates, function ($a, $b) {
+            return ($a->getCost() > $b->getCost());
+        });
     }
 }
