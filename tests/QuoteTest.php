@@ -2,8 +2,9 @@
 namespace pdt256\Shipping;
 
 use DateTime;
+use PHPUnit\Framework\TestCase;
 
-class QuoteTest extends \PHPUnit_Framework_TestCase
+class QuoteTest extends TestCase
 {
     public function testCreate()
     {

@@ -95,8 +95,8 @@ class Rate extends RateAdapter
         ]);
 
         $this->setRequestAdapter(Arr::get($options, 'requestAdapter', new RateRequest\Post()));
-
     }
+
     protected function validate()
     {
         $this->validatePackages();

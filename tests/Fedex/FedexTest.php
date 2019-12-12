@@ -7,8 +7,9 @@ use pdt256\Shipping\Package;
 use pdt256\Shipping\Shipment;
 use pdt256\Shipping\Quote;
 use DateTime;
+use PHPUnit\Framework\TestCase;
 
-class RateTest extends \PHPUnit_Framework_TestCase
+class RateTest extends TestCase
 {
     /** @var Shipment */
     protected $shipment;
@@ -182,6 +183,5 @@ class RateTest extends \PHPUnit_Framework_TestCase
             'requestAdapter' => new StubFedex,
         ]);
         $rateAdapter->getRates();
-
     }
 }

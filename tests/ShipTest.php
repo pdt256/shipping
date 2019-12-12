@@ -2,8 +2,9 @@
 namespace pdt256\Shipping;
 
 use DateTime;
+use PHPUnit\Framework\TestCase;
 
-class ShipTest extends \PHPUnit_Framework_TestCase
+class ShipTest extends TestCase
 {
     /** @var Shipment */
     public $shipment;

@@ -1,7 +1,9 @@
 <?php
 namespace pdt256\Shipping;
 
-class RateAdapterTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RateAdapterTest extends TestCase
 {
     public function testCreate()
     {

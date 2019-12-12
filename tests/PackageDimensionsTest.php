@@ -5,8 +5,9 @@ namespace pdt256\Shipping;
 use pdt256\Shipping\RateRequest\StubFedex;
 use pdt256\Shipping\RateRequest\StubUPS;
 use pdt256\Shipping\RateRequest\StubUSPS;
+use PHPUnit\Framework\TestCase;
 
-class PackageDimensionsValidationTrait extends \PHPUnit_Framework_TestCase
+class PackageDimensionsValidationTrait extends TestCase
 {
     protected function getNormalPackage()
     {

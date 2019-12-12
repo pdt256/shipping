@@ -1,7 +1,9 @@
 <?php
 namespace pdt256\Shipping;
 
-class ShipmentTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ShipmentTest extends TestCase
 {
     public function testCreate()
     {

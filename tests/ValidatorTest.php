@@ -1,7 +1,9 @@
 <?php
 namespace pdt256\Shipping;
 
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ValidatorTest extends TestCase
 {
     /**
      * @expectedException \LogicException

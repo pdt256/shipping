@@ -1,7 +1,9 @@
 <?php
 namespace pdt256\Shipping;
 
-class ArrTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ArrTest extends TestCase
 {
     public function providerGet()
     {
