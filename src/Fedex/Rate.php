@@ -196,20 +196,68 @@ class Rate extends RateAdapter
         return $this;
     }
 
+    /**
+     * @param $response
+     * @return FedexRequestException
+     */
+    protected function getIncorrectResponseException($response)
+    {
+        return new FedexRequestException('Incorrect response received from FedEx: ' . $response);
+    }
+
+    /**
+     * @param string $response
+     * @return FedexRequestException
+     */
+    protected function getExceptionFromResponse($response)
+    {
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom->loadXml($response);
+        $notifications = $dom->getElementsByTagName('Notifications');
+        foreach ($notifications as $notification) {
+            $messages = $notification->getElementsByTagName('Message');
+            if ($messages->length === 0) {
+                break;
+            }
+            foreach ($messages as $message) {
+                $exceptionMessage = $message->textContent;
+                break;
+            }
+            $codes = $notification->getElementsByTagName('Code');
+            if ($codes->length === 0) {
+                break;
+            }
+            foreach ($codes as $code) {
+                $exceptionCode = $code->textContent;
+                break;
+            }
+            $severities = $notification->getElementsByTagName('Severity');
+            if ($severities->length === 0) {
+                break;
+            }
+            foreach ($severities as $severity) {
+                $exceptionSeverity = $severity->textContent;
+                break;
+            }
+            if (!isset($exceptionMessage) || !isset($exceptionCode) || !isset($exceptionSeverity)) {
+                return $this->getIncorrectResponseException($response);
+            }
+            $exception = new FedexRequestException($exceptionMessage, $exceptionCode);
+            $exception->setSeverity($exceptionSeverity);
+            return $exception;
+
+        }
+        return $this->getIncorrectResponseException($response);
+    }
+
     protected function process()
     {
-        try {
-            $dom = new DOMDocument('1.0', 'UTF-8');
-            $dom->loadXml($this->response);
-            $rate_reply = $dom->getElementsByTagName('RateReplyDetails');
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom->loadXml($this->response);
+        $rate_reply = $dom->getElementsByTagName('RateReplyDetails');
 
-            if (empty($rate_reply->length)) {
-                throw new Exception('Unable to get FedEx Rates.');
-            }
-        } catch (Exception $e) {
-            // StatsD::increment('error.shipping.get_fedex_rate');
-            // Kohana::$log->add(Log::ERROR, $e)->write();
-            throw $e;
+        if (empty($rate_reply->length)) {
+            throw $this->getExceptionFromResponse($this->response);
         }
 
         foreach ($rate_reply as $rate) {
