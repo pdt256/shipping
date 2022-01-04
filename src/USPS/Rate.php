@@ -24,7 +24,7 @@ class Rate extends RateAdapter
 
     private $shipping_codes = [
         'domestic' => [
-            '00' => 'First-Class Mail Parcel',
+            '0' => 'First-Class Mail Parcel',
             '01' => 'First-Class Mail Large Envelope',
             '02' => 'First-Class Mail Letter',
             '03' => 'First-Class Mail Postcards',
@@ -155,7 +155,6 @@ class Rate extends RateAdapter
         $url_request = $url . '?API=RateV4&XML=' . rawurlencode($this->data);
 
         $this->response = $this->rateRequest->execute($url_request);
-
         return $this;
     }
 
@@ -183,22 +182,22 @@ class Rate extends RateAdapter
 
             $name = Arr::get($this->shipping_codes['domestic'], $code);
 
-            if (!empty($this->approvedCodes) && !in_array($code, $this->approvedCodes)) {
+            if (!empty($this->approvedCodes) && !isset($this->approvedCodes[$code])) {
                 continue;
             }
 
-            if (array_key_exists($code, $rates)) {
-                $cost = $rates[$code]->getCost() + ($cost * 100);
-            } else {
-                $cost = $cost * 100;
-            }
+            // if (array_key_exists($code, $rates)) {
+            //     $cost = $rates[$code]->getCost() + ($cost * 100);
+            // } else {
+            //     $cost = $cost * 100;
+            // }
 
             $quote = new Quote;
             $quote
                 ->setCarrier('usps')
                 ->setCode($code)
                 ->setName($name)
-                ->setCost((int) $cost);
+                ->setCost($cost);
 
             $rates[$quote->getCode()] = $quote;
         }

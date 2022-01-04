@@ -89,7 +89,7 @@ class Quote
      */
     public function setCost($cost)
     {
-        $this->cost = (int) $cost;
+        $this->cost = $cost;
         return $this;
     }
 

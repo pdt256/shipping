@@ -215,7 +215,7 @@ class Rate extends RateAdapter
         foreach ($rate_reply as $rate) {
             $code = $rate->getElementsByTagName('ServiceType')->item(0)->nodeValue;
 
-            if (! empty($this->approvedCodes) && ! in_array($code, $this->approvedCodes)) {
+            if (!empty($this->approvedCodes) && !isset($this->approvedCodes[$code])) {
                 continue;
             }
 
@@ -235,7 +235,7 @@ class Rate extends RateAdapter
                 ->setCarrier('fedex')
                 ->setCode($code)
                 ->setName($name)
-                ->setCost((int) ($cost * 100))
+                ->setCost($cost)
                 ->setTransitTime($transit_time);
             if ($delivery_ts) {
                 $quote->setDeliveryEstimate(new DateTime($delivery_ts));
