@@ -248,7 +248,7 @@ class Rate extends RateAdapter
                 ->getElementsByTagName('TotalCharges')->item(0)
                 ->getElementsByTagName('MonetaryValue')->item(0)->nodeValue;
 
-            if (! empty($this->approvedCodes) && ! in_array($code, $this->approvedCodes)) {
+            if (!empty($this->approvedCodes) && !isset($this->approvedCodes[$code])) {
                 continue;
             }
 
@@ -257,10 +257,11 @@ class Rate extends RateAdapter
                 ->setCarrier('ups')
                 ->setCode($code)
                 ->setName($name)
-                ->setCost($cost * 100);
+                ->setCost($cost);
             $this->rates[] = $quote;
         }
 
+       
         return $this;
     }
 }
